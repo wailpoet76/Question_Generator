@@ -1,0 +1,445 @@
+<!-- 
+ // Auther: Walid Bakr
+// Date: 2024-07-15
+// Last Update: 2024-07-30
+// Description: Profile Page JS
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In</title>
+    <!-- Render All Elements Normally -->
+    <!-- Awsome -->
+    <link rel="stylesheet" href="Style/Norm/all.min.css" />
+    <!-- CSS Style -->
+    <link rel="stylesheet" href="Style/login.css" />
+  </head>
+
+  <body>
+    <!-- ********************************************* -->
+    <!-- ********************************************* -->
+    <!-- START Form Container -->
+    <!-- ********************************************* -->
+    <!-- ********************************************* -->
+
+    <div class="container">
+      <!-- ********************************************* -->
+      <!-- START Register Form  -->
+      <!-- ********************************************* -->
+      <div class="form Registration">
+        <h1>Registration</h1>
+        <form action="PHP/Register.php" method="post" class="register">
+          <!-- <form action="" method=" post" class="register active"> -->
+          <h3>Personal Information</h3>
+          <!-- STARTS main information -->
+          <div class="personal info">
+            <!-- START ENAME FIELD -->
+            <div class="inpData">
+              <label for=""> Full Name</label>
+              <input
+                type="text"
+                id="nameEn"
+                name="nameEn"
+                class="inp name"
+                placeholder="Name in English"
+                autocomplete="username"
+                required
+                data-state="invalid" />
+              <div class="toolTip" hidden>Insert your full name</div>
+            </div>
+            <!-- ENDS ENAME FIELD -->
+            <!-- START ANAME FIELD -->
+            <div class="inpData Arabic">
+              <label for="" class="inp nameAr"> الأسم بالكامل</label>
+              <input
+                type="text"
+                id="nameAr"
+                name="nameAr"
+                class="inp nameAr"
+                placeholder="الاسم بالعربى"
+                autocomplete="username"
+                required
+                data-state="invalid" />
+              <div class="toolTip" hidden>أدخل اسمك باللغة العربية بالكامل</div>
+            </div>
+            <!-- START ANAME FIELD -->
+            <!-- START EMAIL FIELD -->
+            <div class="inpData">
+              <label for=""> Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="inp emial"
+                placeholder="Email@server.com"
+                autocomplete="email"
+                required
+                data-state="invalid" />
+              <div class="toolTip" hidden>insert a valid Email</div>
+            </div>
+            <!-- ENDS EMAIL FIELD -->
+            <!-- START USERNAME FIELD -->
+            <div class="inpData">
+              <label for=""> User Name</label>
+              <input
+                type="text"
+                id="userName"
+                name="userName"
+                class="inp name"
+                placeholder="Username"
+                autocomplete="username"
+                required
+                data-state="invalid" />
+              <div class="toolTip" hidden>
+                insert Username to enter the application
+              </div>
+            </div>
+            <!-- ENDS USERNAME FIELD -->
+            <!-- START TELEPHONE FIELD -->
+            <div class="inpData">
+              <label for=""> Telephone</label>
+              <input
+                type="text"
+                id="tel"
+                name="tel"
+                class="inp name tel"
+                placeholder="telephone"
+                autocomplete="tel-extension"
+                data-state="invalid"
+                maxlength="13"
+                minlength="11" />
+              <div class="toolTip" hidden>insert You telephone number</div>
+            </div>
+            <!-- ENDS TELEPHONE FIELD -->
+            <!-- START WHATSAPP FIELD -->
+            <div class="inpData">
+              <label for=""> WhatsAPP Tel</label>
+              <input
+                type="text"
+                id="whats"
+                name="whats"
+                class="inp name tel"
+                placeholder="Username"
+                autocomplete="tel-extension"
+                data-state="invalid"
+                maxlength="13"
+                minlength="11" />
+              <div class="toolTip" hidden>
+                insert What'sAPP Telephone Number
+              </div>
+            </div>
+            <!-- ENDS WHATSAPP FIELD -->
+            <!-- START PASSWORD FIELD -->
+            <div class="inpData pass">
+              <label for=""> Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="inp name fa-eye-slash"
+                placeholder="Password"
+                minlength="8"
+                maxlength="20"
+                autocomplete="current-password"
+                required
+                data-state="invalid" />
+              <div class="toolTip" hidden>
+                insert password contains strings | numbers | symbols more than
+                once to strength your password
+              </div>
+              <p class="info">
+                Insert 8 characters at least (contain numbers & symbols)
+              </p>
+              <div class="inpData info">
+                <label for="" id="strengthValue"> Weak</label>
+                <div class="bar" id="bar-color">
+                  <p class="one"></p>
+                  <p class="two"></p>
+                  <p class="three"></p>
+                  <p class="four"></p>
+                </div>
+              </div>
+              <div class="suggest" hidden>
+                <p for="">Suggest a strong password</p>
+                <p class="sug_btn" onclick="suggestPass()">suggest</p>
+                <i class="fa fa-plus adding" onclick="closeSuggest()"></i>
+              </div>
+            </div>
+            <!-- START PASSWORD FIELD -->
+            <!-- START PASSWORD REPEAT FIELD -->
+            <div class="inpData repeat">
+              <label for=""> Confirm Password</label>
+              <input
+                type="password"
+                id="repassword"
+                name="repassword"
+                class="inp name"
+                placeholder="Repeat password"
+                required
+                autocomplete="current-password"
+                data-state="invalid" />
+              <div class="toolTip" hidden>
+                Retype the same password for confirmation
+              </div>
+              <div class="inpData alert" hidden>
+                <i
+                  class="fas fa-exclamation-triangle"
+                  style="font-size: 16px; color: red"></i>
+                The passwords you entered do not match. Please try again
+              </div>
+            </div>
+            <!-- ENDS PASSWORD REPEAT FIELD -->
+
+            <!-- START PASSWORD QUESTION FIELD -->
+            <p class="info forget">
+              Ask yourself a Question to retrieve the password in case you
+              forget
+            </p>
+            <div class="inpData Question">
+              <label for=""> Forget Password</label>
+              <input
+                type="text"
+                name="forgetpassquestion"
+                id="forgetpassquestion"
+                placeholder="Question"
+                required
+                data-state="invalid" />
+              <div class="toolTip" hidden>
+                Type a question ONLY you can remember easily
+              </div>
+              <input
+                type="text"
+                name="forgetpassanswer"
+                id="forgetpassanswer"
+                placeholder="Answer"
+                required />
+              <div class="toolTip" hidden>
+                type also the answer that you will be asked to retrive your
+                password
+              </div>
+            </div>
+            <!-- ENDS PASSWORD QUESTION FIELD -->
+          </div>
+          <!-- ENDS main information -->
+          <!-- STARTS TEACHING  information -->
+          <div class="wrapper">
+            <input type="text" name="counter" id="counter" hidden />
+            <input type="text" name="counterid" id="counterid" hidden />
+
+            <h3>Teaching Info</h3>
+            <!-- START TEACHING  BLOCK -->
+            <div class="teaching">
+              <div class="adding bar">
+                <i class="fa fa-plus adding"></i>
+              </div>
+              <!-- STARTS type of education FIELD -->
+              <div class="type">
+                <h4>Type of Education</h4>
+                <div>
+                  <select
+                    name="type"
+                    class="type"
+                    required
+                    data-state="invalid">
+                    <option value="0">=== Type of Education ===</option>
+                    <option value="1">National Egyptian Education</option>
+                    <option value="2">STEM</option>
+                    <option value="3">SAT</option>
+                    <option value="4">IG</option>
+                  </select>
+                </div>
+              </div>
+              <!-- ENDS type of education FIELD -->
+              <!-- STARTS Stage FIELD -->
+              <div class="stage" hidden>
+                <h4>Stage</h4>
+                <div>
+                  <select
+                    name="stage"
+                    class="stage"
+                    required
+                    data-state="invalid">
+                    <option value="0">=== Select Stage ===</option>
+                    <option value="1">Elementary</option>
+                    <option value="2">Middle</option>
+                    <option value="3">Senior</option>
+                  </select>
+                </div>
+              </div>
+              <!-- ENDS Stage FIELD -->
+              <!-- STARTS Subject FIELD -->
+              <div class="subject" hidden>
+                <h4>Subject</h4>
+                <div>
+                  <select
+                    name="subject"
+                    class="subject"
+                    required
+                    data-state="invalid">
+                    <option value="0">=== Select Subject ===</option>
+                    <option value="PHY">Physics</option>
+                    <option value="CHE">Chemistry</option>
+                    <option value="BIO">Biology</option>
+                    <option value="GEO">Geology</option>
+                    <option value="MAT">Maths</option>
+                  </select>
+                </div>
+              </div>
+              <!-- ENDS Subject FIELD -->
+              <!-- STARTS GRADE FIELD -->
+              <div class="grade" hidden>
+                <h4>Grade</h4>
+                <div>
+                  <select
+                    name="grade"
+                    class="grade"
+                    required
+                    data-state="invalid">
+                    <option value="0">=== Select Grade ===</option>
+                    <option value="G10">Grade 10</option>
+                    <option value="G11">Grade 11</option>
+                    <option value="G12">Grade 12</option>
+                  </select>
+                </div>
+              </div>
+              <!-- ENDS GRADE FIELD -->
+              <!-- STARTS LANG TYpE and REVISION FIELD -->
+              <div class="lang" hidden>
+                <h4>Material</h4>
+                <section>
+                  <!-- <div name="material" class="material" required data-state='valid'> -->
+                  <div name="lang" class="lang" required data-state="invalid">
+                    <label
+                      ><input type="checkbox" name="lang1" class="checklang" value="ENG" />
+                      English</label
+                    >
+                    <label
+                      ><input type="checkbox" name="lang2" class="checklang" value="AR" />
+                      عربى</label
+                    >
+                    <label
+                      ><input type="checkbox" name="revisor" class="checklang" value="REV" />
+                      Revisor</label
+                    >
+                  </div>
+                </section>
+              </div>
+              <!-- ENDS LANG TYpE and REVISION FIELD -->
+              <input type="text" name="itemid" class="itemid" hidden />
+            </div>
+            <!-- ENDS TEACHING  BLOCK -->
+          </div>
+          <!-- ENDS TEACHING  information -->
+          <input
+            type="submit"
+            class="registerbtn"
+            value="Register"
+            name="registerbtn" />
+          <div class="reg-link">
+            <p>
+              Already have an account,
+              <a href="#" class="get-login login" onclick="toggleLogin()"
+                >Login</a
+              >
+            </p>
+          </div>
+        </form>
+      </div>
+      <!-- ********************************************* -->
+
+      <!-- ********************************************* -->
+      <!-- START Login Form  -->
+      <!-- ********************************************* -->
+      <div class="form Login active">
+        <form
+          action="PHP/login.php?do=Forget"
+          method="post"
+          class="forget active"
+          hidden>
+          <div class="inpData">
+            <input
+              type="text"
+              id="forgetuserName_login"
+              name="userName"
+              class="inp name"
+              placeholder="Username"
+              autocomplete="username"
+              required
+              data-state="invalid"
+              hidden />
+            <input
+              type="submit"
+              class="forgetBtn registerbtn"
+              value="forget"
+              name="forgetBtn"
+              id="forgetBtn" />
+          </div>
+        </form>
+        <!-- <h1>Login</h1> -->
+        <form
+          action="PHP/login.php?do=Login"
+          method="post"
+          class="login active">
+          <div class="inpData">
+            <label for=""> User Name</label>
+            <input
+              type="text"
+              id="userName_login"
+              name="userName"
+              class="inp name"
+              placeholder="Username"
+              autocomplete="username"
+              required
+              data-state="invalid" />
+          </div>
+          <div class="inpData pass">
+            <label for=""> Password</label>
+            <input
+              type="password"
+              id="password_login"
+              name="password"
+              class="inp name fa-eye-slash"
+              placeholder="Password"
+              minlength="8"
+              autocomplete="current-password"
+              required
+              data-state="invalid" />
+          </div>
+          <div class="remember">
+            <label>
+              <input
+                type="checkbox"
+                name="remember_me"
+                id="remember_me_login" />
+              Remember me
+            </label>
+            <a href="#" class="get-login forget">Forget Passowrd?</a>
+          </div>
+          <input
+            type="submit"
+            class="registerbtn login loginBtn"
+            value="Login"
+            name="loginBtn"
+            id="loginBtn" />
+          <div class="reg-link">
+            <p>
+              Don't have an account?,
+              <a href="#" class="get-login register" onclick="toggleLogin()"
+                >Register</a
+              >
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- ********************************************* -->
+
+    <!-- ********************************************* -->
+    <!-- END Form Container -->
+    <!-- ********************************************* -->
+  </body>
+  <script src="Js/login.js"></script>
+</html>

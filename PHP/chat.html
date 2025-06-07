@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Review Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Left Panel */
+        .left-panel {
+            width: 25%;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .left-panel h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .filter {
+            margin-bottom: 20px;
+        }
+
+        .filter select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .question-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .question-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .question-item.active {
+            background-color: #e0e0e0;
+        }
+
+        .status {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Main Panel */
+        .main-panel {
+            width: 45%;
+            background-color: #fff;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .main-panel h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .review-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .review-content.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .review-point {
+            margin-bottom: 15px;
+        }
+
+        .review-point h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .review-point p {
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Right Panel (Chat) */
+        .right-panel {
+            width: 30%;
+            background-color: #efeae2;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #ddd;
+        }
+
+        .chat-header {
+            background-color: #075e54;
+            color: #fff;
+            padding: 10px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .chat-area {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background: url('https://i.imgur.com/5W3e6eI.jpg') repeat; /* WhatsApp-like background */
+        }
+
+        .chat-content {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .chat-content.active {
+            opacity: 1;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            max-width: 70%;
+            padding: 8px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .message.received {
+            background-color: #fff;
+            margin-right: 20%;
+        }
+
+        .message.sent {
+            background-color: #dcf8c6;
+            margin-left: 20%;
+            margin-right: 5px;
+        }
+
+        .message p {
+            font-size: 14px;
+        }
+
+        .message .time {
+            font-size: 10px;
+            color: #666;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .chat-input button {
+            background-color: #075e54;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-input button:hover {
+            background-color: #064c43;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <h2>Questions</h2>
+            <div class="filter">
+                <select id="status-filter">
+                    <option value="all">All Statuses</option>
+                    <option value="Under Review">Under Review</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                </select>
+            </div>
+            <div class="question-item" data-id="1" data-status="Under Review">
+                <p>Question 1</p>
+                <div class="status">Under Review</div>
+            </div>
+            <div class="question-item" data-id="2" data-status="Pending">
+                <p>Question 2</p>
+                <div class="status">Pending</div>
+            </div>
+            <div class="question-item" data-id="3" data-status="Approved">
+                <p>Question 3</p>
+                <div class="status">Approved</div>
+            </div>
+        </div>
+
+        <!-- Main Panel -->
+        <div class="main-panel">
+            <h2>Points of Review</h2>
+            <div class="review-content" id="review-1">
+                <div class="review-point">
+                    <h4>Clarity</h4>
+                    <p>The question is somewhat clear but could benefit from more specific wording.</p>
+                </div>
+                <div class="review-point">
+                    <h4>Relevance</h4>
+                    <p>Highly relevant to the current project goals.</p>
+                </div>
+                <div class="review-point">
+                    <h4>Suggestions</h4>
+                    <p>Add an example to illustrate the question's intent.</p>
+                </div>
+            </div>
+            <div class="review-content" id="review-2">
+                <div class="review-point">
+                    <h4>Clarity</h4>
+                    <p>Needs more context to be fully understood.</p>
+                </div>
+                <div class="review-point">
+                    <h4>Relevance</h4>
+                    <p>Moderately relevant, but scope needs to be defined.</p>
+                </div>
+            </div>
+            <div class="review-content" id="review-3">
+                <div class="review-point">
+                    <h4>Clarity</h4>
+                    <p>Very clear and well-structured.</p>
+                </div>
+                <div class="review-point">
+                    <h4>Relevance</h4>
+                    <p>Perfectly aligned with project objectives.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel (Chat) -->
+        <div class="right-panel">
+            <div class="chat-header">
+                Team Chat
+            </div>
+            <div class="chat-area">
+                <div class="chat-content" id="chat-1">
+                    <div class="message received">
+                        <p>Hey, I think Question 1 needs a bit more clarity.</p>
+                        <div class="time">10:30 AM</div>
+                    </div>
+                    <div class="message sent">
+                        <p>Agreed, let's add an example to it.</p>
+                        <div class="time">10:32 AM</div>
+                    </div>
+                </div>
+                <div class="chat-content" id="chat-2">
+                    <div class="message received">
+                        <p>Question 2 is a bit vague. Can we discuss this in the next meeting?</p>
+                        <div class="time">11:00 AM</div>
+                    </div>
+                </div>
+                <div class="chat-content" id="chat-3">
+                    <div class="message sent">
+                        <p>Question 3 looks good to me! Ready to approve.</p>
+                        <div class="time">11:15 AM</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type a message...">
+                <button>➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionItems = document.querySelectorAll('.question-item');
+        const reviewContents = document.querySelectorAll('.review-content');
+        const chatContents = document.querySelectorAll('.chat-content');
+        const statusFilter = document.getElementById('status-filter');
+
+        // Handle question selection
+        questionItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active class from all items
+                questionItems.forEach(i => i.classList.remove('active'));
+                reviewContents.forEach(content => content.classList.remove('active'));
+                chatContents.forEach(content => content.classList.remove('active'));
+
+                // Add active class to clicked item
+                item.classList.add('active');
+
+                // Show corresponding review and chat
+                const id = item.getAttribute('data-id');
+                const review = document.getElementById(`review-${id}`);
+                const chat = document.getElementById(`chat-${id}`);
+                if (review) review.classList.add('active');
+                if (chat) chat.classList.add('active');
+            });
+        });
+
+        // Handle filter
+        statusFilter.addEventListener('change', () => {
+            const filterValue = statusFilter.value;
+            questionItems.forEach(item => {
+                const status = item.getAttribute('data-status');
+                if (filterValue === 'all' || status === filterValue) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // If the currently active item is hidden, reset to the first visible item
+            const activeItem = document.querySelector('.question-item.active');
+            if (activeItem && activeItem.style.display === 'none') {
+                const firstVisible = document.querySelector('.question-item:not([style*="display: none"])');
+                if (firstVisible) firstVisible.click();
+            }
+        });
+
+        // Set the first question as active by default
+        questionItems[0].classList.add('active');
+        reviewContents[0].classList.add('active');
+        chatContents[0].classList.add('active');
+
+        // Handle chat input (basic functionality)
+        const chatInput = document.querySelector('.chat-input input');
+        const sendButton = document.querySelector('.chat-input button');
+        sendButton.addEventListener('click', () => {
+            const messageText = chatInput.value.trim();
+            if (messageText) {
+                const activeChat = document.querySelector('.chat-content.active');
+                const newMessage = document.createElement('div');
+                newMessage.classList.add('message', 'sent');
+                newMessage.innerHTML = `<p>${messageText}</p><div class="time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>`;
+                activeChat.appendChild(newMessage);
+                chatInput.value = '';
+                activeChat.scrollTop = activeChat.scrollHeight; // Scroll to bottom
+            }
+        });
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendButton.click();
+        });
+    </script>
+    
+</body>
+</html>
