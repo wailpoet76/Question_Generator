@@ -1,7 +1,7 @@
 <?php
 // Auther: Walid Bakr
 // Date: 2024-07-15
-// Last Update: 2025-05-31
+// Last Update: 2025-06-07
 // Description: Langauge ARABIC STATEMENTS
 
 //Arabic version
@@ -86,8 +86,7 @@ function fn_lang($phrase)
     'VID6' => "Welcome Meeting PART 1",
     'VID7' => "Welcome Meeting PART 2",
     //REVISOR Page
-    'OUTCOME' => "مخرج التعلم",
-    'QUESTION' => "السؤال",
+    'QUESTIONREV' => "السؤال",
     'ACTION' => "الأكشن",
     'REVLINK' => "إبدأ المراجعة",
     'REVSTUDY' => "إبدأ الدراسة",

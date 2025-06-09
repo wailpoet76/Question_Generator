@@ -1,5 +1,6 @@
 <?php
 $dsn = "mysql:host=sql202.infinityfree.com;dbname=if0_39178435_qg";
+$dsn = "mysql:host=sql202.infinityfree.com;port=3306;dbname=if0_39178435_qg";
 $username = "if0_39178435";
 $pass = "I8P39LLZQOWoU";
 

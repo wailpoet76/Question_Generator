@@ -32,7 +32,7 @@
     href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
     rel="stylesheet" />
     <!-- Main Template CSS File -->
-    <link rel="stylesheet" href="<?php echo $css;?>frontend.css" />
+    <link rel="stylesheet" href="<?php echo $css;?>Frontend.css" />
   </head>
     <body>
       <div class="header">

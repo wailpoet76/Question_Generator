@@ -1,7 +1,7 @@
 <?php
 // Auther: Walid Bakr
 // Date: 2024-07-15
-// Last Update: 2025-05-31
+// Last Update: 2025-06-07
 // Description: Langauge ENGLISH STATEMENTS
 
 //English version
@@ -46,7 +46,7 @@ function fn_lang($phrase)
         'DEPTH' => "Depth of knowledge",
         'DOK' => "Guide for choosing the DOK",
         'RECALL' => "Recall",
-        'DIRECT' => "Direct Application",
+        'DIRECT' => "Basic Application",
         'STRATEGIC_THINKNG' => "Strategic Thinking",
         'NO_REF' => "No Reference",
         'BRAND_NEW' => "Brand New",
@@ -86,8 +86,7 @@ function fn_lang($phrase)
         'VID6' => "Welcome Meeting PART 1",
         'VID7' => "Welcome Meeting PART 2",
         //REVISOR Page
-        'OUTCOME' => "Learning Outcome",
-        'QUESTION' => "Question",
+        'QUESTIONREV' => "Question",
         'ACTION' => "Action",
         'REVLINK' => "Start Revision",
         'REVSTUDY' => "Start Study",

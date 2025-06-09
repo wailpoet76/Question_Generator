@@ -8,7 +8,7 @@
 //Routes
 $MainDir=dirname($_SERVER['PHP_SELF']);
 
-global $langset;
+global $langset;$sender;$reciever;
     $tpl='includes/templates/';//tempalte directory
     $func='includes/functions/';//Functions Directory
     $langsDir='includes/langauges/';//langauges files directory

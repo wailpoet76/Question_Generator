@@ -1,6 +1,7 @@
 // Auther: Walid Bakr
 // Date: 2024-07-15
 // Last Update: 2025-03-08
+// Last Update: 2025-06-07
 // Description: LogIn Page JS
 //
 
@@ -111,9 +112,13 @@ regFormObjTeach.lang = document.getElementsByClassName("lang");
 //********     Listen to inputs         ****************** */
 //******************************************************** */
 // keypressed for Eng and Arabic name fields
-const enInp = document.getElementById("nameEn");
+const enInp1= document.getElementById("nameEn");// Edited in 2025-06-07
+const enInp2= document.getElementById("email");// added in 2025-06-07
+const enInp3= document.getElementById("userName");// added in 2025-06-07
 const arInp = document.getElementById("nameAr");
-let inpValueEn = enInp.value;
+let inp1ValueEn = enInp1.value;
+let inp2ValueEn = enInp2.value;
+let inp3ValueEn = enInp3.value;
 let inpValueAR = arInp.value;
 //Arabic Letters check
 const arRegEX = /^[\u0600-\u06ff\s]+$/; //Arabic charachters
@@ -126,12 +131,38 @@ arInp.addEventListener("keypress", function (e) {
     inpValueAR = this.value;//no special action for space
   });
 //English Letters check
-enInp.addEventListener("keypress", function (e) {
+enInp1.addEventListener("keypress", function (e) {
   if (arRegEX.test(e.key)) {
     e.preventDefault();
   }
 });
-enInp.addEventListener("keyup", function (e) {
+enInp1.addEventListener("keyup", function (e) {
+  if (e.key === " "){
+    this.value=this.value + " "; //add space
+  }else{
+    inpValueEn = this.value;
+    this.value= inpValueEn;
+  }
+    });
+enInp2.addEventListener("keypress", function (e) {
+  if (arRegEX.test(e.key)) {
+    e.preventDefault();
+  }
+});
+enInp2.addEventListener("keyup", function (e) {
+  if (e.key === " "){
+    this.value=this.value + " "; //add space
+  }else{
+    inpValueEn = this.value;
+    this.value= inpValueEn;
+  }
+    });
+enInp3.addEventListener("keypress", function (e) {
+  if (arRegEX.test(e.key)) {
+    e.preventDefault();
+  }
+});
+enInp3.addEventListener("keyup", function (e) {
   if (e.key === " "){
     this.value=this.value + " "; //add space
   }else{

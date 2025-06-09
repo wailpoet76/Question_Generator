@@ -1,7 +1,7 @@
 <?php
 // Auther: Walid Bakr
 // Date: 2024-07-15
-// Last Update: 2025-04-29
+// Last Update: 2025-06-08
 // Description: MAIN USED FUNCTIONS page
 
 ob_start();
@@ -125,7 +125,7 @@ function fn_getLatest($select,$table,$where,$order,$type,$limit){
 
 
 // count member who bought my items function V1.0
-function fn_countClients($select,$from,$tblecol,$cond){
+function fn_countClients($to,$tblecol,$cond){
     global $con;
 
     $stmt=$con->prepare("SELECT $select FROM $from WHERE $tblecol=$cond");
@@ -133,6 +133,45 @@ function fn_countClients($select,$from,$tblecol,$cond){
     return $stmt->fetchColumn();
 }
 
+//my 1st use of PHPMAILER
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// OR if you're not using Composer, include manually:
+require 'src/PHPMailer.php';
+require 'src/SMTP.php';
+require 'src/Exception.php';
+//Version 1.0 
+function sendEmail($to,$receivename,$subject,$body,$altbody){
+
+$mail = new PHPMailer(true);
+
+try {
+    // Server settings
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';       // Your SMTP server
+    $mail->SMTPAuth = true;
+    $mail->Username = 'assessmentinstitution2023@gmail.com';     // SMTP username
+    $mail->Password = 'qumz uaod kltq zqur';       // SMTP password
+    // $mail->SMTPSecure = 'tls';              // or 'ssl'
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;              // or 'ssl'
+    $mail->Port = 587;                      // or 465 for ssl
+
+    // Recipients
+    $sender=array('assessmentinstitution2023@gmail.com', 'Question Generator');
+    $mail->setFrom($sender[0],$sender[1]);
+    $mail->addAddress($to, $receivename);
+    // Content
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+    $mail->Body    = $body;
+    $mail->AltBody = $altbody;//'Hello! Thanks for joining us.'
+
+    $mail->send();
+} catch (Exception $e) {
+        echo "Email could not be sent. Error: {$mail->ErrorInfo}";
+    }
+}
 
 
 //********************************************** */

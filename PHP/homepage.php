@@ -6,7 +6,6 @@
 
 
 session_start();
-// global $langset;
 $pageTitle = 'Homepage';
 $langset = isset($_GET['Langset']) ? $_GET['Langset'] : "Eng"; //default langauges is English each time
 include 'init.php'; // initiate the file with headers and navbar
@@ -556,7 +555,6 @@ if (isset($_SESSION['teacher_name'])) {
                                 <label for="textarea" class="fw-semibold"><?php echo fn_lang('STEM'); ?>
                             </label>
                             <!-- START STEM OF QUESTION NOTES -->
-                            <label for="textarea" class="fw-semibold"><?php echo fn_lang('STEMREPORT'); ?>
                             <?php if($reviewData['errors']===1){
                                 ?>
                             <label for="textarea" class="fw-semibold"><?php echo fn_lang('ERROR'); ?>
@@ -636,16 +634,15 @@ if (isset($_SESSION['teacher_name'])) {
                                 ?>
                             <label for="textarea" class="fw-semibold"><?php echo fn_lang('STEMMODEXTRA'); ?>
                             <div class="revnote"><?php echo $reviewData['stem_modify_note'] ;?></div>
-                            <?php } ?>
-                            
+                            <?php } ?>                            
                             <!-- END STEM OF QUESTION NOTES -->
+                            <label for="textarea" class="fw-semibold"><?php echo fn_lang('STEMREPORT'); ?>
                             <!-- Math bar inserted here by following function -->
                             <?php echo fn_QuestionBar("stem") ?>
                             <script>
                                 document.getElementById('textarea-stem').value = <?php echo json_encode($DBEditrow['Question_Body']); ?>;
                             </script>
-                            </div>
-                            
+                            </div>                            
                             <!-- END STEM -->
                             <!-- START STEM Image -->
                             <div class="body mb-3 checkbar">
@@ -709,16 +706,22 @@ if (isset($_SESSION['teacher_name'])) {
                                 </label>
                             </div>
                             <!-- START STEM Image NOTE -->
-                            <?php if($reviewData['stimulus_needed']===1){
-                                ?>
-                            <label for="textarea" class="fw-semibold"><?php echo fn_lang('NEEDEXTRA'); ?>
-                            <div class="revnote"><?php echo $reviewData['stimulus_needed_note'] ;?></div>
-                            <?php } ?>
                             <?php if($reviewData['stimulus_adjust']===1){
                                 ?>
                             <label for="textarea" class="fw-semibold"><?php echo fn_lang('RECEXTRA'); ?>
                             <div class="revnote"><?php echo $reviewData['stimulus_adjust_note'] ;?></div>
                             <?php } ?>
+                            <?php if($reviewData['stimulus_needed']===1){
+                                ?>
+                            <label for="textarea" class="fw-semibold"><?php echo fn_lang('NEEDEXTRA'); ?>
+                            <div class="revnote"><?php echo $reviewData['stimulus_needed_note'] ;?></div>
+                            <?php } ?>
+                            <?php if($reviewData['stimulus_modification']===1){
+                                ?>
+                            <label for="textarea" class="fw-semibold"><?php echo fn_lang('RECEXTRA'); ?>
+                            <div class="revnote"><?php echo $reviewData['stimulus_modification_note'] ;?></div>
+                            <?php } ?>
+                            
                             <!-- END STEM Image NOTE-->
                             <!-- END STEM Image -->
                             <!-- START SUB STEM -->
@@ -731,6 +734,28 @@ if (isset($_SESSION['teacher_name'])) {
                                     document.getElementById('textarea-substem').value = <?php echo  json_encode($DBEditrow['sub_stem']) ; ?>;
                                 </script>
                             </div>
+                            <!-- START SUBSTEM NOTE -->
+                            <!-- END SUBSTEM NOTE -->
+                            <?php if($reviewData['stem_end']===1){
+                                ?>
+                            <label for="textarea" class="fw-semibold"><?php echo fn_lang('STEMREVEXTRA'); ?>
+                            <div class="revnote"><?php echo $reviewData['stem_end_note'] ;?></div>
+                            <?php } ?>
+                            <?php if($reviewData['stem_good']===1){
+                                ?>
+                            <label for="textarea" class="fw-semibold"><?php echo fn_lang('SIMPLE'); ?>
+                            <div class="revnote"><?php echo $reviewData['stem_good_note'] ;?></div>
+                            <?php } ?>
+                            <?php if($reviewData['stem_third']===1){
+                                ?>
+                            <label for="textarea" class="fw-semibold"><?php echo fn_lang('THIRDEXTRA'); ?>
+                            <div class="revnote"><?php echo $reviewData['stem_third_note'] ;?></div>
+                            <?php } ?>
+                            <?php if($reviewData['stem_modify']===1){
+                                ?>
+                            <label for="textarea" class="fw-semibold"><?php echo fn_lang('STEMMODEXTRA'); ?>
+                            <div class="revnote"><?php echo $reviewData['stem_modify_note'] ;?></div>
+                            <?php } ?>
                             <!-- END SUBSTEM -->
                             <!-- START SUBSTEM Image -->
                             <div class="body mb-3 checkbar">
@@ -796,7 +821,7 @@ if (isset($_SESSION['teacher_name'])) {
                             <!-- END SUBSTEM Image -->
                             <!-- START OPTIONS -->
                             <!-- START OPTIONS NOTES-->
-                            <h3 class="Questions" ><?php echo fn_lang('QUESTION') ?></h3>
+                            <h3 class="Questions" ><?php echo fn_lang('QUESTIONREV') ?></h3>
                             <?php if($reviewData['response_relation']===1){
                             ?>
                             <label for="textarea" class="fw-semibold"><?php echo fn_lang('RESPONDEXTRA'); ?>
@@ -1066,7 +1091,8 @@ if (isset($_SESSION['teacher_name'])) {
                                     <a href="?do=Delete&Langset=<?php echo ($langset) ?>&record=<?php echo $DBEditrows[$i]['question_id'] ?>" class="btn btn-danger confirm"><i class='fa fa-trash'></i> <?php echo fn_lang('DELETE'); ?></a>
                                 </td>
                                 <td>
-                                    <a href="?do=RevisionSend&Langset=<?php echo ($langset) ?>&record=<?php echo $DBEditrows[$i]['question_id'] ?>" class="btn btn-primary"><i class='fa fa-check'></i> <?php echo fn_lang('SEND'); ?></a>
+                                    <!--old <a href="?do=RevisionSend&Langset... -->
+                                    <a href="?do=RevisionJump&Langset=<?php echo ($langset) ?>&DBrecord=<?php echo $DBEditrows[$i]['question_id'] ?>" class="btn btn-primary"><i class='fa fa-check'></i> <?php echo fn_lang('SEND'); ?></a>
                                 </td>
                             </tr>
                         <?php
@@ -1223,7 +1249,7 @@ if (isset($_SESSION['teacher_name'])) {
                     </div>
                     <!-- END SUBSTEM Image -->
                     <!-- START OPTIONS -->
-                    <h3 class="Questions" ><?php echo fn_lang('QUESTION') ?></h3>
+                    <h3 class="Questions" ><?php echo fn_lang('QUESTIONREV') ?></h3>
                     <div class="Question coloring">
                         <?php for ($i = 1; $i < 5; $i++) {
                             $questionName = ["One", "Two", "Three", "Four"]
@@ -1721,12 +1747,71 @@ if (isset($_SESSION['teacher_name'])) {
                         if (QimgLink) URL.revokeObjectURL(QimgLink);
                     </script>
         <?php
-                            if (isset($_POST['send'])) {
+                              
+                                //prepare data to send email to creator and revisors
+                                $DBCALL = $con->prepare("SELECT *
+                                    FROM
+                                        teachers                                       
+                                    WHERE
+                                        teacher_id=?
+                                    ");
+                                $DBCALL->execute(array($_SESSION['teacher_id']));
+                                $emailCreator=$DBCALL->fetch();
+                                $DBCALL = $con->prepare("SELECT COUNT(*)
+                                    FROM
+                                        questions_create                                       
+                                    WHERE
+                                        teacher_id=?
+                                    ");
+                                $DBCALL->execute(array($_SESSION['teacher_id']));
+                                $Qno=$DBCALL->fetchColumn();
+                                //prepare data to send email to revisor1
+                                $DBCALL = $con->prepare("SELECT *
+                                    FROM
+                                        teacher_items
+                                    INNER JOIN
+                                        teachers
+                                    ON
+                                        teachers.teacher_id=teacher_items.teacher_id
+                                    WHERE
+                                        teacher_items.item_id=?
+                                    ");
+                                $DBCALL->execute(array($rev_itemid[0]));
+                                $emailRevisor1=$DBCALL->fetch();
+                                //prepare data to send email to revisor2
+                                $DBCALL = $con->prepare("SELECT *
+                                    FROM
+                                        teacher_items
+                                    INNER JOIN
+                                        teachers
+                                    ON
+                                        teachers.teacher_id=teacher_items.teacher_id
+                                    WHERE
+                                        teacher_items.item_id=?
+                                    ");
+                                $DBCALL->execute(array($rev_itemid[1]));
+                                $emailRevisor2=$DBCALL->fetch();
+                                //sending email to creator
+                                $body = "<h1>Congratulation</h1> <h2>".$emailCreator['ename']."</h2>";
+                                $msg="Well done You have been created (" . $Qno . ") Questions till now.<h2>Don't replay</h2><p>Well done</p>";
+                                //call email function
+                                sendEmail($emailCreator['email'],$emailCreator['ename'],"Question Created",$body.$msg,$msg);
+                                //check pushed btn send revisor (send) save question (else)
+                                if (isset($_POST['send'])) {
                                 $DBREVISION = $con->prepare("SELECT * FROM questions_create ORDER BY question_id DESC LIMIT 1;");
                                 $DBREVISION->execute();
                                 $current_record = $DBREVISION->fetch();
-                                fn_redirect("Question is Recorded", "success", 2, "?do=RevisionSend&Langset=$langset&record=$current_record[question_id]");
+                                //sending emails to revisor number (1)
+                                $body="<h1>Congratulation</h1> <h2>".$emailRevisor1['ename']."</h2>";
+                                $msg="You Have been Picked up to revise A Question in your profile for(" . $_POST['subject']."/".$_POST['grade']."/".$_POST['lang'] . ") Harry Up.<h2>Don't replay</h2>";
+                                sendEmail($emailRevisor1['email'],$emailRevisor1['ename'],"Question to be revised",$body.$msg,$msg);
+                                //sending emails to revisor number (2)
+                                $body="<h1>Congratulation</h1> <h2>".$emailRevisor2['ename']."</h2>";
+                                sendEmail($emailRevisor2['email'],$emailRevisor2['ename'],"Question to be revised",$body.$msg,$msg);
+                                //finish mission
+                                fn_redirect("Question is Recorded, and sending to revisors...", "success", 6, "?do=RevisionSend&Langset=$langset&record=$current_record[question_id]");
                             } else {
+                                
                                 fn_redirect("Question is Recorded", "success", 4, "?do=Dash&Langset=$langset");
                             }
                         }
@@ -1739,6 +1824,67 @@ if (isset($_SESSION['teacher_name'])) {
         ?>
     </div>
 <?php
+                break;
+            case 'RevisionJump':
+                ?>
+                <div class="container">
+                    <?php
+                    //prepare data to send email to revisors
+                    $DBCALL = $con->prepare("SELECT *
+                    FROM
+                        questions_create
+                    INNER JOIN
+                        teachers
+                    ON
+                        questions_create.teacher_id=teachers.teacher_id
+                    WHERE
+                        questions_create.question_id=?
+                    ORDER BY
+                        creation_date ASC
+                    ");
+                    $DBCALL->execute(array($_GET['DBrecord']));
+                    $data=$DBCALL->fetch();
+                    $rev1=$data['revisor_one'];
+                    $rev2=$data['revisor_two'];
+                    //prepare data to send email to revisor1
+                    $DBCALL = $con->prepare("SELECT *
+                        FROM
+                            teachers
+                        INNER JOIN
+                            teacher_items
+                        ON
+                            teachers.teacher_id=teacher_items.teacher_id
+                        WHERE
+                            teachers.teacher_id=?
+                        ");
+                    $DBCALL->execute(array($rev1));
+                    $emailRevisor1=$DBCALL->fetch();
+                    //prepare data to send email to revisor2
+                    $DBCALL = $con->prepare("SELECT *
+                        FROM
+                            teachers
+                        INNER JOIN
+                            teacher_items
+                        ON
+                            teachers.teacher_id=teacher_items.teacher_id
+                        WHERE
+                            teachers.teacher_id=?
+                        ");
+                    $DBCALL->execute(array($rev2));
+                    $emailRevisor2=$DBCALL->fetch();
+                    //sending emails to revisor number (1)
+                    $body="<h1>Congratulation</h1> <h2>".$emailRevisor1['ename']."</h2>";
+                    $msg="You Have been Picked up to revise A Question in your profile for(" . $data['subject']."/".$data['grade']."/".$data['lang'] . ") Harry Up.<h2>Don't replay</h2>";
+                    sendEmail($emailRevisor1['email'],$emailRevisor1['ename'],"Question to be revised",$body.$msg,$msg);
+                    //sending emails to revisor number (2)
+                    $body="<h1>Congratulation</h1> <h2>".$emailRevisor2['ename']."</h2>";
+                    sendEmail($emailRevisor2['email'],$emailRevisor2['ename'],"Question to be revised",$body.$msg,$msg);
+                    //finish mission
+
+                    fn_redirect("Question is Recorded, and sending to revisors...", "success", 6, "?do=RevisionSend&Langset=".$_GET['Langset']."&record=".$_GET['DBrecord']);
+                    ?>
+                </div>
+                <?php
                 break;
             case 'Update':
                 //prepare data from teacher_items
@@ -2219,7 +2365,7 @@ if (isset($_SESSION['teacher_name'])) {
                     </div>
                     <!-- END SUBSTEM Image -->
                     <!-- START OPTIONS -->
-                    <h3 class="Questions" ><?php echo fn_lang('QUESTION') ?></h3>
+                    <h3 class="Questions" ><?php echo fn_lang('QUESTIONREV') ?></h3>
                     <div class="Question coloring">
                         <?php for ($i = 1; $i < 5; $i++) {
                             $questionName = ["One", "Two", "Three", "Four"]
@@ -2860,8 +3006,9 @@ case 'Revisoredit':
                             <!-- START DOK CONTENT-->
                             <input type="text" name="depthcontent" id="depthcontent"
                             class="form-control revinp"
-                            value="<?php echo $result['depth'];?>"
-                                disabled>
+                            value="<?php echo fn_lang($result['depth']);?>"
+                                disabled>                                
+                                <!-- DEBUG -->
                             <!-- END DOK CONTENT-->
                             <!-- START DOK COMMENT -->
                             <div class="body mb-3">
@@ -3454,7 +3601,7 @@ case 'Revisoredit':
                             <!-- START DOK CONTENT-->                            
                             <input type="text" name="dokcontent" id="dokcontent"
                             class="form-control revinp"
-                            value="<?php echo $result['depth'];?>"
+                            value="<?php echo fn_lang($result['depth']);?>"
                             <?php if($result['11'] == 1){//'11' replacement for dok_review DB
                                 echo "style='background-color: rgba(255, 0, 0, 0.3);'";
                             };?>
@@ -3462,7 +3609,7 @@ case 'Revisoredit':
                             <!-- END DOK CONTENT-->
                             <!-- START DOK COMMENT -->
                             <div class="body mb-3">
-                                <textarea placeholder="<?php echo fn_lang("REVCAUSE");?>" class="form-control" name="dokcheck" id="dokcheck" <?php echo($result['10'] == 0)? "hidden":"";?>><?php echo $result['dok_note'];?></textarea>
+                                <textarea placeholder="<?php echo fn_lang("REVCAUSE");?>" class="form-control" name="dokcheck" id="dokcheck" <?php echo($result['11'] == 0)? "hidden":"";?>><?php echo $result['dok_note'];?></textarea>
                             </div>
                             <!-- END DOK COMMENT-->
                             <!-- START DOK EXTRA NOTE -->
@@ -4836,7 +4983,7 @@ case 'Video':
                                         </div>
                                         <!-- END SUBSTEM Image -->
                                         <!-- START OPTIONS -->
-                                        <h3 class="Questions" ><?php echo fn_lang('QUESTION') ?></h3>
+                                        <h3 class="Questions" ><?php echo fn_lang('QUESTIONREV') ?></h3>
                                         <div class="Question coloring">
                                             <?php for ($i = 1; $i < 5; $i++) {
                                                 $questionName = ["One", "Two", "Three", "Four"]
