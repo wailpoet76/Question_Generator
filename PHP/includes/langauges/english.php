@@ -1,7 +1,7 @@
 <?php
 // Auther: Walid Bakr
 // Date: 2024-07-15
-// Last Update: 2025-06-07
+// Last Update: 2025-06-17
 // Description: Langauge ENGLISH STATEMENTS
 
 //English version
@@ -18,6 +18,9 @@ function fn_lang($phrase)
         'ENGLISH' => "English",
         'ARABIC' => "Arabic",
         'WELCOME' => "Welcome",
+        'CREATEDQ' => "Created questions",
+        'APPROVEDQ' => "Approved questions",
+        'USERCREAT' => "You creates",
         'QG' => "Question Generator",
         'URGENT' => "Urgent",
         'CREATEQ' => "Create new Question",
@@ -27,6 +30,7 @@ function fn_lang($phrase)
         'DATAQ' => "Questions Database",
         'ACCOUNT' => "My Account",
         'CREATED' => "CREATED",
+        'SUBMITTED' => "SUBMIT",
         'RESULT' => "Results",
         'QCREATOR' => "Question Generator Area",
         'URGQ' => "Urgent Questions",
@@ -47,7 +51,7 @@ function fn_lang($phrase)
         'DOK' => "Guide for choosing the DOK",
         'RECALL' => "Recall",
         'DIRECT' => "Basic Application",
-        'STRATEGIC_THINKNG' => "Strategic Thinking",
+        'STRATEGIC THINKNG' => "Strategic Thinking",
         'NO_REF' => "No Reference",
         'BRAND_NEW' => "Brand New",
         'REF_SELECT' => "Adjusted From Reference",
@@ -96,7 +100,7 @@ function fn_lang($phrase)
         'LO' => "Content suitabilitiy to Learning Outcome ",
         'REVCAUSE' => "Insert  Your Cause",
         'PALGRISM' => "Paligrism Checker",
-        'PALGRISMTALK' => "use the link (https://www.quetext.com/) to log in the plagiarism checker and give us information about the plagiarism of the stem of item",
+        'PALGRISMTALK' => 'use the link (<a href="https://www.quetext.com/" target="_blank">https://www.quetext.com/</a>) or (<a href="https://www.duplichecker.com/" target="_blank">https://www.duplichecker.com/</a>) to log in the plagiarism checker and give us information about the plagiarism of the stem of item',
         // 'DOK' => "Depth of knowledge",same as depth
         'DOKEXTRA' => "The item is written at either DoK Level 2 (Basic Application) or DoK Level 3 (Strategic Thinking) Not in Dok Level 1 (Recall)",
         'DOKPROFF' => "Cause of DOK",// instead of DOK

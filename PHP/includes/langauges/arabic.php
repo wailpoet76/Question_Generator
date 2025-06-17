@@ -1,7 +1,7 @@
 <?php
 // Auther: Walid Bakr
 // Date: 2024-07-15
-// Last Update: 2025-06-07
+// Last Update: 2025-06-17
 // Description: Langauge ARABIC STATEMENTS
 
 //Arabic version
@@ -18,6 +18,9 @@ function fn_lang($phrase)
     'ENGLISH' => "الإنجليزية",
     'ARABIC' => "العربية",
     'WELCOME' => "مرحباً",
+    'CREATEDQ' => "الأسئله المنشائه",
+    'APPROVEDQ' => "الأسئله المعتمدة",
+    'USERCREAT' => "أنشئ بواسطتك",
     'QG' => "منشئ الأسئلة",
     'URGENT' => "ضرورى",
     'CREATEQ' => "أنشئ سؤال جديد",
@@ -27,6 +30,7 @@ function fn_lang($phrase)
     'DATAQ' => "قاعدة بيانات الأسئله",
     'ACCOUNT' => "حسابى",
     'CREATED' => "تاريخ الإنشاء",
+    'SUBMITTED' => "تاريخ الإعتماد",
     'RESULT' => "النتائج",
     'QCREATOR' => "منطقة منشئ الأسئله",
     'URGQ' => "أسئله طارئة",
@@ -47,7 +51,7 @@ function fn_lang($phrase)
     'DOK' => "دليل على اختيار العمق المعرفى",
     'RECALL' => "تذكر",
     'DIRECT' => "تطبيق مباشر",
-    'STRATEGIC_THINKNG' => "تفكير استراتيجى",
+    'STRATEGIC THINKNG' => "تفكير استراتيجى",
     'NO_REF' => "لا يوجد مرجع",
     'BRAND_NEW' => "من ابتكارى",
     'REF_SELECT' => "مستوحى من مرجع",
@@ -96,7 +100,7 @@ function fn_lang($phrase)
     'LO' => "ملائمة المحتوى لمخرج التعلم",
     'REVCAUSE' => "أدخل السبب",
     'PALGRISM' => "كاشف النقل",
-    'PALGRISMTALK' => "يمكنك الدخول على الرابط (https://www.quetext.com/) ووضع نص السؤال سيظهر لك نسبة الغش من الشبكة العنكبوتية أكتب النسبة التي انتجها البرنامج في المكان المخصص لذلك",
+    'PALGRISMTALK' => 'يمكنك الدخول على الرابط (<a href="https://www.quetext.com/" target="_blank">https://www.quetext.com/</a>) أو (<a href="https://www.duplichecker.com/" target="_blank">https://www.duplichecker.com/</a>) ووضع نص السؤال سيظهر لك نسبة الغش من الشبكة العنكبوتية أكتب النسبة التي انتجها البرنامج في المكان المخصص لذلك',
     // 'DOK' => "Depth of knowledge",same as depth
     'DOKEXTRA' => "السؤال ينتمى للمعمق المعرفى تطبيق مباشر أو تفكير إستراتيجى ولا ينتمى للعمق المعرفى تذكر",
     'DOKPROFF' => "دليل على اختيار العمق المعرفى",// instead of DOK
@@ -160,7 +164,7 @@ function fn_lang($phrase)
     'OPMODEXTRA' => "في حال اقتراح استجابة بديلة تكتب في الخانة التالية",
     'ACCEPT' => "قبول السؤال",
     'REPORT' => "إرسل تقرير",
-    'CANCEL' => "إالغاء",
+    'CANCEL' => "إلغاء",
     // REVISOR PREPARE REPORT PAGE
     'REPORTPREPARE' => "إعداد التقرير",
     // CREATOR Re Revision

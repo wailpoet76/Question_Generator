@@ -26,15 +26,15 @@ function fn_redirect($msg,$type="danger",$sec = 3,$location){
     echo "<div class='border-start border-info  border-5 border-top-0 border-bottom-0 border-end-0 alert alert-info'>you will be redirected to home page after <strong><span class='time'>$timer</strong></span> Seconds.</div>";
     ?>
     <script>
-    const timeSpan=document.querySelector(".time");
-    let timeJS=<?php echo $timer?>;
-    let x= setInterval(function(){
+        const timeSpan=document.querySelector(".time");
+        let timeJS=<?php echo $timer?>;
+        let x= setInterval(function(){
                 timeSpan.innerHTML=--timeJS;
                 if(timeJS<1){
                     clearInterval(x);
                 }
             },1000);
-            </script>
+    </script>
 
     <?php
     if ($location=="back"){
@@ -122,57 +122,72 @@ function fn_getLatest($select,$table,$where,$order,$type,$limit){
 
 }
 
-
-
-// count member who bought my items function V1.0
-function fn_countClients($to,$tblecol,$cond){
-    global $con;
-
-    $stmt=$con->prepare("SELECT $select FROM $from WHERE $tblecol=$cond");
-    $stmt->execute();
-    return $stmt->fetchColumn();
-}
-
 //my 1st use of PHPMAILER
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// OR if you're not using Composer, include manually:
 require 'src/PHPMailer.php';
 require 'src/SMTP.php';
 require 'src/Exception.php';
 //Version 1.0 
-function sendEmail($to,$receivename,$subject,$body,$altbody){
+function sendEmail($to,$receivename,$subject,$body,$altbody){    
+    $mail = new PHPMailer(true);
+    try {
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';       // Your SMTP server
+        $mail->SMTPAuth = true;
+        $mail->Username = 'assessmentinstitution2023@gmail.com';     // SMTP username
+        $mail->Password = 'qumz uaod kltq zqur';       // SMTP password
+        // $mail->SMTPSecure = 'tls';              // or 'ssl'
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;              // or 'ssl'
+        $mail->Port = 587;                      // or 465 for ssl
 
-$mail = new PHPMailer(true);
+        // Recipients
+        $sender=array('assessmentinstitution2023@gmail.com', 'Question Generator');
+        $mail->setFrom($sender[0],$sender[1]);
+        $mail->addAddress($to, $receivename);
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body    = $body;
+        $mail->AltBody = $altbody;//'Hello! Thanks for joining us.'
 
-try {
-    // Server settings
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';       // Your SMTP server
-    $mail->SMTPAuth = true;
-    $mail->Username = 'assessmentinstitution2023@gmail.com';     // SMTP username
-    $mail->Password = 'qumz uaod kltq zqur';       // SMTP password
-    // $mail->SMTPSecure = 'tls';              // or 'ssl'
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;              // or 'ssl'
-    $mail->Port = 587;                      // or 465 for ssl
-
-    // Recipients
-    $sender=array('assessmentinstitution2023@gmail.com', 'Question Generator');
-    $mail->setFrom($sender[0],$sender[1]);
-    $mail->addAddress($to, $receivename);
-    // Content
-    $mail->isHTML(true);
-    $mail->Subject = $subject;
-    $mail->Body    = $body;
-    $mail->AltBody = $altbody;//'Hello! Thanks for joining us.'
-
-    $mail->send();
-} catch (Exception $e) {
+        $mail->send();
+    } catch (Exception $e) {
         echo "Email could not be sent. Error: {$mail->ErrorInfo}";
     }
 }
+//my 1st API call 2025-06-17
+function callOutApi($i){
+    ?>
+    <script>
+            async function sendData() {
+        try {
+            const selectedValue = <?php echo $i;?>;
+            const outrecall = document.querySelector(".outrecall");
+            const response = await fetch("includes\\templates\\route\\outcome.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ value: selectedValue })
+            });
 
+            if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+            }
+
+            const result = await response.json();
+            outrecall.textContent=" this item is found (" + result["message"] + ") times in Bank";
+        } catch (error) {
+            console.error("Fetch error:", error.message);
+        }
+        }
+        sendData();
+        </script>
+    <?php
+}
 
 //********************************************** */
 //*           FRONT END FUNCTIONS                */
@@ -505,11 +520,7 @@ function fn_QuestionBar($classname){
         <div class="Qfooter">
             Powered by: <a href="https://wailpoet76.github.io/CV/" target="_blank">Lion Coder</a>
         </div>
-    </div>
-        <!-- <div class="saves">
-            <input type="button" value="Save as JPG..." onclick="saveAsImage()">
-            <input type="button" value="Save as PDF..." onclick="saveAsPDF()">
-        </div> -->
+    </div>        
 <?php
 }
 

@@ -85,7 +85,17 @@ define('IS_REVISOR', $revisor_checker['revision'] === "REV" ? 1 : 0);
             <div class="revisor addtip" data-tooltip="Revert to Revisor Page">
               <!-- Get Data from DB file -->
               <?php
-              
+              //Active account
+              $DBO = $con->prepare("SELECT *
+                  FROM
+                      teacher_items                        
+                  WHERE
+                      teacher_id = ?
+                  AND
+                      account_status = ?
+                      ");
+              $DBO->execute(array($_SESSION['teacher_id'],1));
+              $activeAccount=$DBO->fetch();
               //Get the DB row for the revisor Questions Number Fresh (IN RED)
               $cart = $con->prepare("SELECT * FROM questions_create
                 WHERE
@@ -98,20 +108,43 @@ define('IS_REVISOR', $revisor_checker['revision'] === "REV" ? 1 : 0);
                   )
                 AND
                   (pilot = ? OR store = ?)
+                AND
+                    type = ?
+                AND
+                    stage = ?
+                AND
+                    grade = ?
+                AND
+                    subject = ?
+                AND
+                    lang = ?
                   ");
-              $cart->execute(array(1,$_SESSION['teacher_id'],'1', $_SESSION['teacher_id'],"1",0,0));
+              $cart->execute(array(1,$_SESSION['teacher_id'],'1', $_SESSION['teacher_id'],"1",0,0,$activeAccount['type'],$activeAccount['stage'],$activeAccount['grade'],$activeAccount['subject'],$activeAccount['lang']));
               $result = $cart->rowCount();
               //Get the DB row for the reviewer Questions Number rereview(IN RGEEN)
-              $readyrevisor = $con->prepare("SELECT * FROM question_review
+              $readyrevisor = $con->prepare("SELECT * 
+                FROM 
+                  question_review
+                INNER JOIN
+                  questions_create
+                ON
+                  questions_create.question_id = question_review.question_id
                 WHERE
-                  revisor_id=:zrevisor_id
+                  revisor_id= ?
                 AND
-                  review_status=:zreview_status
+                  review_status= ?
+                AND
+                  questions_create.type = ?
+                AND                  
+                  questions_create.stage = ?
+                AND                  
+                  questions_create.grade = ?
+                AND
+                  questions_create.subject = ?
+                AND
+                  questions_create.lang = ?
                   ");
-                  $readyrevisor->execute(array(
-                    ':zrevisor_id' => $_SESSION['teacher_id'],
-                    ':zreview_status' => 3
-                  ));
+                  $readyrevisor->execute(array($_SESSION['teacher_id'],3,$activeAccount['type'],$activeAccount['stage'],$activeAccount['grade'],$activeAccount['subject'],$activeAccount['lang']));
               $revisorresult = $readyrevisor->rowCount();
               ?>
               <div class="glasses_child" <?php echo !$result  ? "hidden" : ""; ?>><?php echo $result ?></div>

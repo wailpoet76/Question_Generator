@@ -121,55 +121,44 @@ let inp2ValueEn = enInp2.value;
 let inp3ValueEn = enInp3.value;
 let inpValueAR = arInp.value;
 //Arabic Letters check
-const arRegEX = /^[\u0600-\u06ff\s]+$/; //Arabic charachters
-arInp.addEventListener("keypress", function (e) {
+const arRegEX = /^[\u0600-\u06ff\s]+$/; //match Arabic chars and space only
+//English Letters check
+const enRegEX = /^[A-Za-z0-9@._\-\s]$/;
+
+// arInp.addEventListener("keypress", function (e) {
+arInp.addEventListener("keydown", function (e) {
+   // allow control keys like backspace, arrows, etc.
+    if (e.key.length > 1 || e.altKey || e.ctrlKey || e .metaKey) return;
     if (!arRegEX.test(e.key)) {
       e.preventDefault();
     }
   });
+  //Controls Arabic input field
   arInp.addEventListener("keyup", function (e) {
     inpValueAR = this.value;//no special action for space
   });
+
 //English Letters check
-enInp1.addEventListener("keypress", function (e) {
-  if (arRegEX.test(e.key)) {
-    e.preventDefault();
-  }
-});
-enInp1.addEventListener("keyup", function (e) {
-  if (e.key === " "){
-    this.value=this.value + " "; //add space
-  }else{
-    inpValueEn = this.value;
-    this.value= inpValueEn;
-  }
+[enInp1,enInp2,enInp3].forEach((input,index) => {
+  input.addEventListener("keydown", function (e) {
+    if (e.key.length > 1 || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (!enRegEX.test(e.key)) {
+      e.preventDefault();
+    }
     });
-enInp2.addEventListener("keypress", function (e) {
-  if (arRegEX.test(e.key)) {
-    e.preventDefault();
-  }
-});
-enInp2.addEventListener("keyup", function (e) {
-  if (e.key === " "){
-    this.value=this.value + " "; //add space
-  }else{
-    inpValueEn = this.value;
-    this.value= inpValueEn;
-  }
+
+    input.addEventListener("keyup", function (e) {
+      if (e.key === " "){
+        this.value += " "; //add space
+      }else{
+        const val =  this.value;
+        if (index === 0) inp1ValueEn = val ;
+        else if (index === 1) inp2ValueEn = val ;
+        else if (index === 2) inp3ValueEn = val ;
+        this.value= val;
+      }
     });
-enInp3.addEventListener("keypress", function (e) {
-  if (arRegEX.test(e.key)) {
-    e.preventDefault();
-  }
-});
-enInp3.addEventListener("keyup", function (e) {
-  if (e.key === " "){
-    this.value=this.value + " "; //add space
-  }else{
-    inpValueEn = this.value;
-    this.value= inpValueEn;
-  }
-    });
+  });
 
 //End of checking key pushed
 for (const key in regFormObj) {

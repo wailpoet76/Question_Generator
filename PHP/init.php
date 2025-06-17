@@ -15,6 +15,7 @@ global $langset;$sender;$reciever;
     $css='layout/css/';//Css directory
     $js='layout/js/';//Js directory
     $imgDir='layout/images/';//Images  directory
+    $web="<p>Question Generator web site: https://questiongenerator.ct.ws/</p>";//Web location for emails
     //includes for important files
     include $func."functions.php";
     include  $tpl . 'header.php';

@@ -82,6 +82,36 @@ $(".confirm").click(function () {
 
 const reference = document.getElementById("REFERENCE");
 const reference_inp = document.getElementById("ref_inp");
+
+//Learning outcome API (My 1st API) added in 2025-06-17
+const outcome=document.querySelector(".API");
+const outrecall=document.querySelector(".outrecall");
+if (outcome) {outcome.addEventListener("change", function () {
+  const selectedValue = this.value
+    async function sendData() {
+  try {
+    const response = await fetch("includes\\templates\\route\\outcome.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ value: selectedValue })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    outrecall.textContent=" this item is found (" + result["message"] + ") times in Bank";
+  } catch (error) {
+    console.error("Fetch error:", error.message);
+  }
+}
+sendData();
+});
+}
+
 //checker to produce fraction
 let divisionChecker = 0;
 //checker to Arrow cond
@@ -155,97 +185,107 @@ qtoolbars.forEach((toolButton) => {
     textValue =
       e.target.parentNode.parentNode.parentNode.parentNode.children[1]
         .children[0];
+        const start = textValue.selectionStart;
+        const end = textValue.selectionEnd;
+        
+        // Insert the text at the cursor
+        const before = textValue.value.substring(0, start);
+        const after = textValue.value.substring(end, textValue.value.length);
+
+        // Move cursor to end of inserted text
+        const cursorPos = start + textValue.length;
+        textValue.selectionStart = textValue.selectionEnd = cursorPos;
     if (e.target.classList.contains("active")) {
       switch (e.target.dataset.name) {
         case "1":
-          textValue.value += "<h4>";
+          textValue.value = before + "<h4>" + after;
           break;
         case "2":
-          textValue.value += "<b>";
+          textValue.value = before + "<b>" + after;
           break;
         case "3":
-          textValue.value += "<i>";
+          textValue.value = before + "<i>" + after;
           break;
         case "4":
-          textValue.value += "<u>";
+          textValue.value = before + "<u>" + after;
           break;
         case "5":
-          textValue.value += "<sup>";
+          textValue.value = before + "<sup>" + after;
           break;
         case "6":
-          textValue.value += "<sub>";
+          textValue.value = before + "<sub>" + after;
           break;
         case "7":
-          textValue.value += "<small>";
+          textValue.value = before + "<small>" + after;
           break;
         case "8":
-          textValue.value += "Ω";
+          textValue.value = before + "Ω" + after;
           e.target.classList.toggle("active");
           break;
         case "9":
-          textValue.value += "<span class='sqrt'>";
+          textValue.value = before + "<span class='sqrt'>" + after;
           break;
         case "10":
           if (divisionChecker++ === 0) {
-            textValue.value += "<span class='frac'><span>";
+            textValue.value = before + "<span class='frac'><span>" + after;
             e.target.style.backgroundColor = "greenyellow";
           } else {
             //add numinator
             divisionChecker = 0;
-            textValue.value += "</span></span>";
+            textValue.value = before + "</span></span>" + after;
             // e.target.style..removeProperty('background-color');
             e.target.style.backgroundColor = "transparent";
             e.target.classList.toggle("active");
           }
           break;
         case "11":
-          textValue.value += "&nbsp&nbsp&nbsp&nbsp";
+          textValue.value = before + "&nbsp&nbsp&nbsp&nbsp" + after;
           e.target.classList.toggle("active");
           break;
         case "12":
-          textValue.value += "<span class='vect'>";
+          textValue.value = before + "<span class='vect'>" + after;
           break;
         case "13":
-          textValue.value += "<span class='barD'>";
+          textValue.value = before + "<span class='barD'>" + after;
           break;
         case "14":
-          textValue.value += "<span class='surround'>";
+          textValue.value = before + "<span class='surround'>" + after;
           break;
         case "15":
-          textValue.value += "<span class='surround round'>";
+          textValue.value = before + "<span class='surround round'>" + after;
           break;
         case "16":
-          textValue.value += "<span class='surround square'>";
+          textValue.value = before + "<span class='surround square'>" + after;
           break;
         case "17":
-          textValue.value += "<span class='surround curly'>";
+          textValue.value = before + "<span class='surround curly'>" + after;
           break;
         case "18":
-          textValue.value += "<span class='arr'></span>";
+          textValue.value = before + "<span class='arr'></span>" + after;
+          e.target.classList.toggle("active");
           break;
         case "19":
-          // textValue.value += "<span class='arr'><span class='arrCndUp'>";
-          textValue.value += "<span class='arr'><span class='arrCndUp'>";
+          textValue.value = before + "<span class='arr'><span class='arrCndUp'>" + after;
           break;
         case "20":
           if (arrowUpDown++ === 0) {
-            textValue.value += "<span class='arr'><span class='arrCndUp'>";
+            textValue.value = before + "<span class='arr'><span class='arrCndUp'>" + after;
             e.target.style.backgroundColor = "greenyellow";
           } else {
             //add numinator
             arrowUpDown = 0;
-            textValue.value += "</span></span>";
+            textValue.value = before + "</span></span>" + after;
             // e.target.style..removeProperty('background-color');
             e.target.style.backgroundColor = "transparent";
             e.target.classList.toggle("active");
           }
           break;
         case "21":
-          textValue.value += "<span class='arrVert up'></span>";
+          textValue.value = before + "<span class='arrVert up'></span>" + after;
           e.target.classList.toggle("active");
           break;
         case "22":
-          textValue.value += "<span class='arrVert down'></span>";
+          textValue.value = before + "<span class='arrVert down'></span>" + after;
           e.target.classList.toggle("active");
           break;
         default:
@@ -255,34 +295,34 @@ qtoolbars.forEach((toolButton) => {
     } else {
       switch (e.target.dataset.name) {
         case "1":
-          textValue.value += "</h4>";
+          textValue.value = before + "</h4>" + after;
 
           break;
         case "2":
-          textValue.value += "</b>";
+          textValue.value = before + "</b>" + after;
           break;
         case "3":
-          textValue.value += "</i>";
+          textValue.value = before + "</i>" + after;
           break;
         case "4":
-          textValue.value += "</u>";
+          textValue.value = before + "</u>" + after;
           break;
         case "5":
-          textValue.value += "</sup>";
+          textValue.value = before + "</sup>" + after;
           break;
         case "6":
-          textValue.value += "</sub>";
+          textValue.value = before + "</sub>" + after;
           break;
         case "7":
-          textValue.value += "</small>";
+          textValue.value = before + "</small>" + after;
           break;
         case "9":
-          textValue.value += "</span>";
+          textValue.value = before + "</span>" + after;
           break;
-        case "10":
+          case "10":
           //1st press add dominator
           if (divisionChecker++ === 1) {
-            textValue.value += "</span><span>";
+            textValue.value = before + "</span><span>" + after;
             e.target.style.backgroundColor = "skyblue";
           }
 
@@ -294,14 +334,15 @@ qtoolbars.forEach((toolButton) => {
         case "15":
         case "16":
         case "17":
-          textValue.value += "</span>";
+          textValue.value = before + "</span>" + after;
           break;
         case "19":
+          textValue.value = before + "</span></span>" + after;
           textValue.value += "</span></span>";
           break;
         case "20":
           if (arrowUpDown++ === 1) {
-            textValue.value += "</span><span class='arrCndDown'>";
+            textValue.value = before + "</span><span class='arrCndDown'>" + after;
             e.target.style.backgroundColor = "skyblue";
           }
           break;

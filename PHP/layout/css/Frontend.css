@@ -1,7 +1,7 @@
 /*
 // Auther: Walid Bakr
 // Date: 2024-07-15
-// Last Update: 2025-05-23
+// Last Update: 2025-06-15
 // Description: Profile CSS FILE
 
 /*
@@ -287,6 +287,37 @@ h6 {
 h6.float-r-t {
   float: right;
 }
+div.datashow{
+  background-color: var(--background-color-secondary);
+  width: fit-content;
+  margin-top: 10px;
+  margin-left: 30px;
+  padding: 5px;
+  padding-bottom: 0px;
+  display: grid;
+  font-size: small;
+  border-radius: 5px;
+  border: solid 2px white;
+  animation: coloring 8s 3s ease forwards infinite;
+}
+@keyframes coloring {
+  0%{
+    background-color: var(--background-color-secondary);    
+    color: var(--text-color);    
+  }
+  50%{
+    background-color: var(--text-muted);    
+    color: var(--background-color-secondary);    
+  }
+  100%{
+    background-color: var(--background-color-secondary);    
+    color: var(--text-color);    
+  }
+  
+}
+p.float-r-t {
+  justify-self: right;
+}
 
 .content {
   margin: 0px 10px;
@@ -533,7 +564,7 @@ h6.float-r-t {
 
 select.outcome {
   width: 250px !important;
-  var(--text-color)-space: nowrap;
+  white-space: nowrap;
   overflow: scroll;
   text-overflow: ellipsis;
 }
@@ -542,7 +573,7 @@ select.outcome {
   /* Adjust the max-width as needed */
   width: 200px !important;
   max-width: 300px !important;
-  var(--text-color)-space: nowrap !important;
+  white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
 }
@@ -617,7 +648,7 @@ select.outcome {
 
 .walid_math .qtoolbar span:hover,
 .qtoolbar span.active {
-  background-color:var(--background-color-secondary);
+  background-color:var(--primary-color);
   cursor: pointer;
 }
 
@@ -1006,6 +1037,7 @@ select.outcome {
 .walid_math .textarea {
   margin-top: 20px;
   background-color: var(--background-color);
+  color: var(--text-muted);
   border: 1px solid black;
   /* outline: none; */
   border-style: dotted;

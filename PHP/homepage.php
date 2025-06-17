@@ -1,7 +1,7 @@
 <?php
 // Auther: Walid Bakr
 // Date: 2024-07-15
-// Last Update: 2025-06-07
+// Last Update: 2025-06-15
 // Description: PHP HOME MAIN Page
 
 
@@ -34,6 +34,80 @@ if (isset($_SESSION['teacher_name'])) {
         <h6 class="float-r-t"><?php echo fn_lang('WELCOME') . " " . $shortname ?></h6>
 
     </div>
+    <?php
+    //Active account
+    $DBO = $con->prepare("SELECT *
+        FROM
+            teacher_items                        
+        WHERE
+            teacher_id = ?
+        AND
+            account_status = ?
+            ");
+    $DBO->execute(array($_SESSION['teacher_id'],1));
+    $activeAccount=$DBO->fetch();                
+    //Approved Q only
+    $DBO= $con->prepare("SELECT COUNT(*)
+        FROM
+            questions_create                                       
+        WHERE
+            (rev_one_approval = ? AND rev_two_approval  = ?)
+        AND
+            type = ?
+        AND
+            stage = ?
+        AND
+            grade = ?
+        AND
+            subject = ?
+        AND
+            lang = ?
+            ");
+    $DBO->execute(array(1,1,$activeAccount['type'],$activeAccount['stage'],$activeAccount['grade'],$activeAccount['subject'],$activeAccount['lang']));
+    $approvedQuestions=$DBO->fetchColumn();
+    //created Q only by Profile
+    $DBO= $con->prepare("SELECT COUNT(*) 
+        FROM 
+            questions_create
+        WHERE
+            type = ?
+        AND
+            stage = ?
+        AND
+            grade = ?
+        AND
+            subject = ?
+        AND
+            lang = ?
+            ");
+    $DBO->execute(array($activeAccount['type'],$activeAccount['stage'],$activeAccount['grade'],$activeAccount['subject'],$activeAccount['lang']));
+    $createdQuestions=$DBO->fetchColumn();
+    //User created Q only by Profile
+    $DBO= $con->prepare("SELECT COUNT(*) 
+        FROM 
+            questions_create
+        WHERE
+            type = ?
+        AND
+            stage = ?
+        AND
+            grade = ?
+        AND
+            subject = ?
+        AND
+            lang = ?
+        AND
+            teacher_id = ?
+            ");
+    $DBO->execute(array($activeAccount['type'],$activeAccount['stage'],$activeAccount['grade'],$activeAccount['subject'],$activeAccount['lang'],$_SESSION['teacher_id']));
+    $userQuestions=$DBO->fetchColumn();
+    //print data
+    ?>
+    <div class="datashow container" dir="<?php if ($langset == "Eng") {echo "ltr";} else {echo "rtl";} ?>">
+        <p class="float-r-t"><?php echo fn_lang('CREATEDQ') . ": " . $createdQuestions;?></p>
+        <p class="float-r-t"><?php echo fn_lang('APPROVEDQ') . ": " . $approvedQuestions;?></p>
+        <p class="float-r-t"><?php echo fn_lang('USERCREAT') . ": " . $userQuestions;?></p>
+    </div>
 
     <h1 class="text-center" id="header">Dash Board</h1>
     <!-- START Main Contents Containertabs BOX -->
@@ -46,7 +120,7 @@ if (isset($_SESSION['teacher_name'])) {
             </div>
             <div class="sidebar-contents">
                 <ul class="sb-items">
-                    <li><a href="homepage.php?do=Urgent&Langset=<?php echo ($langset) ?>" id="tag1"><i class="fa-solid fa-skull-crossbones fa-1x Urgent" style="color: #F00;"></i> <span><?php echo fn_lang('URGENT'); ?></span></a></li>
+                    <li><a href="homepage.php?do=Urgent&Langset=<?php echo ($langset) ?>" id="tag1"><i class="fa-solid fa-exclamation-triangle text-danger fa-1x Urgent" style="color: #F00;"></i> <span><?php echo fn_lang('URGENT'); ?></span></a></li>
                     <li><a href="homepage.php?do=Myquest&Langset=<?php echo ($langset) ?>" id="tag2"><i class="fa-regular fa-folder-open fa-1x Myquest" style="color: var(--Dark-Green-color);"></i> <span><?php echo fn_lang('QUESTIONS'); ?></span></a></li>
                     <li><a href="homepage.php?do=Newquest&Langset=<?php echo ($langset) ?>" id="tag3"><i class="fa-solid fa-folder-plus fa-1x Newquest" style="color: var(--Dark-Green-color);"></i> <span><?php echo fn_lang('CREATEQ'); ?></span></a></li>
                     <li><a href="homepage.php?do=Dataquest&Langset=<?php echo ($langset) ?>" id="tag4"><i class="fa-solid fa-chart-simple fa-1x Dataquest" style="color: var(--Dark-Green-color);"></i> <span><?php echo fn_lang('DATAQ'); ?></span></a></li>
@@ -81,7 +155,7 @@ if (isset($_SESSION['teacher_name'])) {
                             questions_create.admin_urgent=?
                         AND
                             teachers.ename=?
-                            AND
+                        AND
                             questions_create.teacher_item_id=?
                         ");
                 $dbUrgent->execute(array(1, $_SESSION['teacher_name'],$teacherProfile[0]['item_id']));
@@ -126,7 +200,26 @@ if (isset($_SESSION['teacher_name'])) {
                         ");
                 $dbCreatedQ->execute(array(0,$teacherProfile[0]['item_id']));
                 $DBrowsdbCreatedQ = $dbCreatedQ->fetchAll();
-
+                //prepare tab of QuestionDatabase for pilot Q
+                $dbo = $con->prepare("SELECT *
+                        FROM
+                            questions_create
+                        INNER JOIN
+                            teachers
+                        ON
+                            questions_create.teacher_id=teachers.teacher_id
+                        WHERE
+                            questions_create.question_case=?
+                        AND
+                            questions_create.pilot=?
+                        AND
+                            questions_create.teacher_item_id=?
+                        ORDER BY
+                            creation_date DESC
+                        ");
+                $dbo->execute(array(2,1,$teacherProfile[0]['item_id']));
+                $DBrowsdbQ = $dbo->fetchAll();
+                
                 //set up  variables from DB
                 $questions_urgent = (count($DBrowsUrgent) > 0) ? count($DBrowsUrgent) : 0;
                 @$myUrgentDate = explode(" ", $DBrowsUrgent[0]['creation_date']);
@@ -137,8 +230,10 @@ if (isset($_SESSION['teacher_name'])) {
                 $createquestions = (count($DBrowsdbCreatedQ) > 0) ? count($DBrowsdbCreatedQ) : 0;
                 @$myCreateDate = explode(" ", $DBrowsdbCreatedQ[0]['creation_date']);
 
-                $databasequestions = 4;
-                $collectquestions = 5;
+                $databasequestions = (count($DBrowsdbQ) > 0) ? count($DBrowsdbQ) : 0;;
+                @$myDatabaseQDate = explode(" ", $DBrowsdbQ[0]['submit_date']);
+
+                $collectquestions = 0;
         ?>
                 <!-- START Contents Containertabs BOX -->
                 <div class="container tabs" dir="<?php echo ($langset == "Eng") ?  "ltr" : "rtl";  ?>">
@@ -147,7 +242,7 @@ if (isset($_SESSION['teacher_name'])) {
                         <div class="colorbar <?php echo (count($DBrowsUrgent) > 0) ? 'urgactive' : ''; ?>"></div>
                         <div class="create"><?php echo fn_lang("CREATED") ?>: <?php echo $myUrgentDate[0] ? $myUrgentDate[0] : "EMPTY"; ?></div>
                         <div class="tabcontent">
-                            <p class="logo"><i class="fa-solid fa-skull-crossbones fa-3x" style="color: #F00;"></i>
+                            <p class="logo"><i class="fa-solid fa-exclamation-triangle text-danger fa-3x" style="color: #F00;"></i>
                             <div class="label">
                                 <h5><?php echo fn_lang("URGENT") ?></h5>
                             </div>
@@ -192,8 +287,8 @@ if (isset($_SESSION['teacher_name'])) {
                     <!-- END Add New Question BOX -->
                     <!-- START DATABASE BOX -->
                     <div class="databasequestion">
-                        <div class="colorbar"></div>
-                        <div class="create"><?php echo fn_lang("CREATED") ?>: 2024-09-27</div>
+                        <div class="colorbar <?php echo (($databasequestions) > 0) ? 'active' : ''; ?>"></div>
+                        <div class="create"><?php echo fn_lang("SUBMITTED") ?>: <?php echo $myDatabaseQDate[0] ? $myDatabaseQDate[0] : "EMPTY"; ?></div>
                         <div class="tabcontent">
                             <p class="logo"><i class="fa-solid fa-chart-simple fa-3x" style="color: #0BC279;"></i>
                             <div class="label">
@@ -271,7 +366,12 @@ if (isset($_SESSION['teacher_name'])) {
                 }
             ?>
         </div>
+        <div class="question contents">
+        <p>Hi collection</p>
+        <h1>Under construction</h1>
     </div>
+    </div>
+
 <?php
                 break;
             case 'Myquest':
@@ -369,6 +469,7 @@ if (isset($_SESSION['teacher_name'])) {
                 document.getElementById("tag2").parentNode.classList.add("active");
             </script>
             <?php
+                
                 //prepare data from teacher_items
                 $DBrow = fn_getRecordsV2("*", "teacher_items", "WHERE teacher_id=? AND account_status=?", array($_SESSION['teacher_id'], 1));
                 $DBEdit = $con->prepare("SELECT *
@@ -494,7 +595,7 @@ if (isset($_SESSION['teacher_name'])) {
                                     <select name="depth" id="depth" class="depth form-select <?php if($reviewData['dok']===1) echo 'revactive';?>" required>
                                         <option value="RECALL"><?php echo fn_lang('RECALL') ?></option>";
                                         <option value="DIRECT"><?php echo fn_lang('DIRECT') ?></option>";
-                                        <option value="STRATEGIC THINKNG"><?php echo fn_lang('STRATEGIC_THINKNG') ?></option>";
+                                        <option value="STRATEGIC THINKNG"><?php echo fn_lang('STRATEGIC THINKNG') ?></option>";
                                     </select>
                                 </label>
                             </div>
@@ -642,7 +743,7 @@ if (isset($_SESSION['teacher_name'])) {
                             <script>
                                 document.getElementById('textarea-stem').value = <?php echo json_encode($DBEditrow['Question_Body']); ?>;
                             </script>
-                            </div>                            
+                            </div>
                             <!-- END STEM -->
                             <!-- START STEM Image -->
                             <div class="body mb-3 checkbar">
@@ -720,8 +821,7 @@ if (isset($_SESSION['teacher_name'])) {
                                 ?>
                             <label for="textarea" class="fw-semibold"><?php echo fn_lang('RECEXTRA'); ?>
                             <div class="revnote"><?php echo $reviewData['stimulus_modification_note'] ;?></div>
-                            <?php } ?>
-                            
+                            <?php } ?>                            
                             <!-- END STEM Image NOTE-->
                             <!-- END STEM Image -->
                             <!-- START SUB STEM -->
@@ -1112,7 +1212,7 @@ if (isset($_SESSION['teacher_name'])) {
                 <!-- START The outcomes -->
                 <div>
                     <label for="outcome"><?php echo fn_lang('OUTCOME'); ?>
-                        <select name="outcome" id="outcome" class="outcome form-select" required>
+                        <select name="outcome" id="outcome" class="outcome form-select API" required>
                             <?php
                             for ($i = 0; $i < count($outcomes); $i++) {
                                 echo "<option value=" . $outcomes[$i]['outcome_id'] . ">" . "Unit" . $outcomes[$i]['unit'] . " - Ch" . $outcomes[$i]['chapter'] . " - " . $outcomes[$i]['item'] . " - " . substr($outcomes[$i]["content"], 0, 120) . "</option>";
@@ -1120,6 +1220,9 @@ if (isset($_SESSION['teacher_name'])) {
                             ?>
                         </select>
                     </label>
+                    <!-- outcome item number in Question Bank -->
+                    <span class="outrecall"></span>
+                    <?php echo callOutApi($outcomes[0]['outcome_id']);?>
                 </div>
                 <!-- END The outcomes -->
                 <!-- START The Question Body -->
@@ -1161,7 +1264,7 @@ if (isset($_SESSION['teacher_name'])) {
                             <select name="depth" id="depth" class="depth form-select" required>
                                 <option value="RECALL"><?php echo fn_lang('RECALL') ?></option>";
                                 <option value="DIRECT"><?php echo fn_lang('DIRECT') ?></option>";
-                                <option value="STRATEGIC THINKNG"><?php echo fn_lang('STRATEGIC_THINKNG') ?></option>";
+                                <option value="STRATEGIC THINKNG"><?php echo fn_lang('STRATEGIC THINKNG') ?></option>";
                             </select>
                         </label>
                     </div>
@@ -1239,7 +1342,7 @@ if (isset($_SESSION['teacher_name'])) {
                             <div class="img">
                                 <img alt="" class="subimageArea">
                                 <div class="subcloud cloud">
-                                    <i class="fa fa-cloud-arrow-up fa-3x" color="#0BC279">XXX</i>
+                                    <i class="fa fa-cloud-arrow-up fa-3x" color="#0BC279"></i>
                                     <p>Drag and drop or click <strong>here</strong><br>to upload Image</p>
                                     <span>Upload any images from your local storage</span>
                                     <p class="alert alert-danger m-0 p-1 sizeMsg" hidden>Too <strong>Large</strong> File, Try to upload file smaller than <strong>2MB</strong></p>
@@ -1793,7 +1896,7 @@ if (isset($_SESSION['teacher_name'])) {
                                 $emailRevisor2=$DBCALL->fetch();
                                 //sending email to creator
                                 $body = "<h1>Congratulation</h1> <h2>".$emailCreator['ename']."</h2>";
-                                $msg="Well done You have been created (" . $Qno . ") Questions till now.<h2>Don't replay</h2><p>Well done</p>";
+                                $msg="Well done You have been created (" . $Qno . ") Questions till now.<h2>Don't replay</h2><p>Well done</p>" . $web;
                                 //call email function
                                 sendEmail($emailCreator['email'],$emailCreator['ename'],"Question Created",$body.$msg,$msg);
                                 //check pushed btn send revisor (send) save question (else)
@@ -1803,7 +1906,7 @@ if (isset($_SESSION['teacher_name'])) {
                                 $current_record = $DBREVISION->fetch();
                                 //sending emails to revisor number (1)
                                 $body="<h1>Congratulation</h1> <h2>".$emailRevisor1['ename']."</h2>";
-                                $msg="You Have been Picked up to revise A Question in your profile for(" . $_POST['subject']."/".$_POST['grade']."/".$_POST['lang'] . ") Harry Up.<h2>Don't replay</h2>";
+                                $msg="You Have been Picked up to revise A Question in your profile for(" . $_POST['subject']."/".$_POST['grade']."/".$_POST['lang'] . ") Harry Up.<h2>Don't replay</h2>" . $web;
                                 sendEmail($emailRevisor1['email'],$emailRevisor1['ename'],"Question to be revised",$body.$msg,$msg);
                                 //sending emails to revisor number (2)
                                 $body="<h1>Congratulation</h1> <h2>".$emailRevisor2['ename']."</h2>";
@@ -1874,7 +1977,7 @@ if (isset($_SESSION['teacher_name'])) {
                     $emailRevisor2=$DBCALL->fetch();
                     //sending emails to revisor number (1)
                     $body="<h1>Congratulation</h1> <h2>".$emailRevisor1['ename']."</h2>";
-                    $msg="You Have been Picked up to revise A Question in your profile for(" . $data['subject']."/".$data['grade']."/".$data['lang'] . ") Harry Up.<h2>Don't replay</h2>";
+                    $msg="You Have been Picked up to revise A Question in your profile for(" . $data['subject']."/".$data['grade']."/".$data['lang'] . ") Harry Up.<h2>Don't replay</h2>" . $web;
                     sendEmail($emailRevisor1['email'],$emailRevisor1['ename'],"Question to be revised",$body.$msg,$msg);
                     //sending emails to revisor number (2)
                     $body="<h1>Congratulation</h1> <h2>".$emailRevisor2['ename']."</h2>";
@@ -2081,6 +2184,22 @@ if (isset($_SESSION['teacher_name'])) {
                                 review_status=?,creator_time=?
                                 WHERE question_review.id=?");
                                 $DBO->execute(array(3,gmdate("H:i:s",$finalTime), $_GET['review_id']));// return to re revision
+                                //prepare for Emails
+                                $DPO=$con->prepare("SELECT * FROM question_review WHERE id = ?");
+                                $DPO->execute(array($_GET['review_id']));
+                                $review=$DPO->fetch();
+                                $DPO=$con->prepare("SELECT * FROM teachers WHERE teacher_id = ?");
+                                $DPO->execute(array($review['revisor_id']));
+                                $emailRevisor=$DPO->fetch();
+                                $DPO=$con->prepare("SELECT * FROM teachers WHERE teacher_id = ?");
+                                $DPO->execute(array($_SESSION['teacher_id']));
+                                $emailCreator=$DPO->fetch();
+                                //Report message and email to creator
+                                //sending email to creator
+                                $body = "<h1>Be Alerted</h1> <h2>".$emailRevisor['ename']."</h2>";
+                                $msg=$emailCreator['ename']." found fixes his question and return it to you to be re revised.<h2>Don't replay</h2><p>Well done</p>" . $web;            
+                                sendEmail($emailRevisor['email'],$emailRevisor['ename'],"Question Have returned",$body.$msg,$msg);
+                                //sending message to creator
                                 fn_redirect("Record Updated, And returned to revisor", "success", 3, "?do=Dash&Langset=$langset");
                             }
                             fn_redirect("Record Updated", "success", 3, "?do=Newquest&Langset=$langset");
@@ -2180,7 +2299,7 @@ if (isset($_SESSION['teacher_name'])) {
                             <select name="depth" id="depth" class="depth form-select" required>
                                 <option value="RECALL"><?php echo fn_lang('RECALL') ?></option>";
                                 <option value="DIRECT"><?php echo fn_lang('DIRECT') ?></option>";
-                                <option value="STRATEGIC THINKNG"><?php echo fn_lang('STRATEGIC_THINKNG') ?></option>";
+                                <option value="STRATEGIC THINKNG"><?php echo fn_lang('STRATEGIC THINKNG') ?></option>";
                             </select>
                         </label>
                     </div>
@@ -2593,19 +2712,21 @@ if (isset($_SESSION['teacher_name'])) {
         document.getElementById("tag4").parentNode.classList.add("active");
     </script>
     <div class="question contents">
-        <p>Hi Database
+        <p>Hi Database</p>
+        <h1>Under construction</h1>
     </div>
 <?php
                 break;
             case 'Collectquest':
-?>
+    ?>
     <!-- Page Heading -->
     <script>
         document.getElementById("header").innerText = "<?php echo fn_lang('GETQ'); ?>";
         document.getElementById("tag5").parentNode.classList.add("active");
     </script>
     <div class="question contents">
-        <p>Collection
+        <p>Hi collection</p>
+        <h1>Under construction</h1>
     </div>
 <?php
     break;
@@ -2620,6 +2741,19 @@ case 'Revisorpage'://glasses btn clicked
         <div class="tabs">
             <div class="tab active" onclick="switchTab(event, 'tab1')"><?php echo fn_lang('REVISION');?></div>
             <div class="tab" onclick="switchTab(event, 'tab2')"><?php echo fn_lang('STUDY');?></div>
+            <?php
+                //Active account
+                $DBO = $con->prepare("SELECT *
+                    FROM
+                        teacher_items                        
+                    WHERE
+                        teacher_id = ?
+                    AND
+                        account_status = ?
+                        ");
+                $DBO->execute(array($_SESSION['teacher_id'],1));
+                $activeAccount=$DBO->fetch();
+            ?>
             <!-- REVISOR first time revision page -->
             <div id="tab1" class="tab-content active">
                 <div class="questionsarea">
@@ -2646,6 +2780,16 @@ case 'Revisorpage'://glasses btn clicked
                                 OR
                                     (revisor_two=:zrev2 AND cart2=:zcart2)
                                 )
+                                AND
+                                    questions_create.type = :ztype
+                                AND                  
+                                    questions_create.stage = :zstage
+                                AND                  
+                                    questions_create.grade = :zgrade
+                                AND
+                                    questions_create.subject = :zsubject
+                                AND
+                                    questions_create.lang = :zlang
                                 ORDER BY
                                     creation_date ASC
                                 ");
@@ -2654,7 +2798,12 @@ case 'Revisorpage'://glasses btn clicked
                                     ':zrev1'=>$_SESSION['teacher_id'],
                                     ':zcart1'=>1,
                                     ':zrev2'=>$_SESSION['teacher_id'],
-                                    ':zcart2'=>1
+                                    ':zcart2'=>1,
+                                    ':ztype'=>$activeAccount['type'],
+                                    ':zstage'=>$activeAccount['stage'],
+                                    ':zgrade'=>$activeAccount['grade'],
+                                    ':zsubject'=>$activeAccount['subject'],
+                                    ':zlang'=>$activeAccount['lang']
                                 ));
                                 while ($DBEditrow = $DBEdit->fetch()) {
                                     // $DBLO database learning objects
@@ -2701,10 +2850,16 @@ case 'Revisorpage'://glasses btn clicked
                             </thead>
                             <tbody>
                                 <?php
+                                //get active profile for revisor
                                 $DBrow = fn_getRecordsV2("*", "teacher_items", "WHERE teacher_id=? AND account_status=?", array($_SESSION['teacher_id'], 1));
+                                //get records to be revised [Green]
                                 $DBEdit = $con->prepare("SELECT *
                                 FROM
                                     questions_create
+                                INNER JOIN
+                                    question_review
+                                ON
+                                    questions_create.question_id = question_review.question_id
                                 WHERE
                                     questions_create.question_case=?
                                 AND
@@ -2713,11 +2868,27 @@ case 'Revisorpage'://glasses btn clicked
                                 OR 
                                     (revisor_two=? AND cart2=?)
                                 )
+                                AND
+                                    questions_create.type = ?
+                                AND                  
+                                    questions_create.stage = ?
+                                AND                  
+                                    questions_create.grade = ?
+                                AND
+                                    questions_create.subject = ?
+                                AND
+                                    questions_create.lang = ?
+                                AND
+                                    question_review.revisor_id=? 
+                                AND 
+                                    question_review.review_status=?
                                 ORDER BY
                                     creation_date ASC
                                 ");
-                                $DBEdit->execute(array(1,$_SESSION['teacher_id'],0,$_SESSION['teacher_id'],0));
-                                while ($DBEditrow = $DBEdit->fetch()) {
+                                $DBEdit->execute(array(1,$_SESSION['teacher_id'],0,$_SESSION['teacher_id'],0,$activeAccount['type'],$activeAccount['stage'],$activeAccount['grade'],$activeAccount['subject'],$activeAccount['lang'],$_SESSION['teacher_id'],3));
+                                $result=$DBEdit->fetchAll();
+                                // while ($DBEditrow = $DBEdit->fetch()) { 
+                                foreach($result as $DBEditrow){
                                     if($DBEditrow['revisor_one']==$_SESSION['teacher_id']){
                                         $revisorQue=1;
                                         $revisor=$DBEditrow['revisor_one'];
@@ -2725,30 +2896,36 @@ case 'Revisorpage'://glasses btn clicked
                                             $revisorQue=2;
                                             $revisor=$DBEditrow['revisor_two'];
                                         }
-                                    //Get reviewed for the Revisor
-                                    $DBreview=$con->prepare("SELECT * FROM question_review 
-                                    WHERE 
-                                        revisor_id=? 
-                                    AND 
-                                        review_status=?
-                                    ");
-                                    $DBreview->execute(array($_SESSION['teacher_id'],3));
-                                    $DBreviewQuestions=$DBreview->fetchAll();
-                                    foreach ($DBreviewQuestions as $DBQuestion) {
-                                        $GETQ=fn_getRecordsV2("*", "questions_create", "WHERE question_id=?", array($DBQuestion['question_id']));
-                                        $DBLO=fn_getRecordsV2("*", "learning_outcomes", "WHERE outcome_id=?", array($GETQ[0]['outcome_id']));
-                                        $LO=$DBLO[0]['unit']." - ".$DBLO[0]['chapter']." - ".$DBLO[0]['item'];
-                                        echo "<tr>";
-                                        echo "<td class='text-center'>" . $LO. "</td>";
-                                        echo "<td>" . $GETQ[0]['Question_Body'] . "</td>";
-                                        if($revisorQue==1){
-                                            $glass = 'cart1';
-                                        }else{
-                                            $glass = 'cart2';
-                                        }
-                                        echo "<td>" ."<a href=?do=Revisoredit&record=" . $DBQuestion['question_id']."&review_id=" .$DBQuestion['id'] ."&Revisor=".$DBQuestion['revisor_id']."&RevisorQue=".$revisorQue."&glass=".$glass. "&Langset=".$langset."&New=0>".fn_lang('REVSTUDY')."</a></td>";
-                                        echo "</tr>";
-                                    };
+                                    // //Get reviewed for the Revisor
+                                    // $DBreview=$con->prepare("SELECT * FROM question_review 
+                                    // WHERE 
+                                    //     revisor_id=? 
+                                    // AND 
+                                    //     review_status=?
+                                    // ");
+                                    // $DBreview->execute(array($_SESSION['teacher_id'],3));
+                                    // $DBreviewQuestions=$DBreview->fetchAll();
+                                    // $revRec=0;
+                                    // foreach ($DBreviewQuestions as $DBreviewQuest) {
+                                    //     echo "Review Q_ID: ".$DBreviewQuest['question_id']."<br>";
+                                    //     echo $DBEditrow['question_id']."<br>====================<br>";
+                                    //     if ($DBreviewQuest['question_id']===$DBEditrow['question_id']) $revRec=$DBreviewQuest['id'];
+                                    //     else continue;
+                                    // }
+                                    $GETQ=fn_getRecordsV2("*", "questions_create", "WHERE question_id=?", array($DBEditrow['question_id']));
+                                    $DBLO=fn_getRecordsV2("*", "learning_outcomes", "WHERE outcome_id=?", array($GETQ[0]['outcome_id']));
+                                    $LO=$DBLO[0]['unit']." - ".$DBLO[0]['chapter']." - ".$DBLO[0]['item'];
+                                    echo "<tr>";
+                                    echo "<td class='text-center'>" . $LO. "</td>";
+                                    echo "<td>" . $GETQ[0]['Question_Body'] . "</td>";
+                                    if($revisorQue==1){
+                                        $glass = 'cart1';
+                                    }else{
+                                        $glass = 'cart2';
+                                    }
+                                    // echo "<td>" ."<a href=?do=Revisoredit&record=" . $DBreviewQuestions[$revRec]['question_id']."&review_id=" .$DBreviewQuestions[$revRec]['id'] ."&Revisor=".$DBreviewQuestions[$revRec]['revisor_id']."&RevisorQue=".$revisorQue."&glass=".$glass. "&Langset=".$langset."&New=0>".fn_lang('REVSTUDY')."</a></td>";
+                                    echo "<td>" ."<a href=?do=Revisoredit&record=" . $DBEditrow['question_id']."&review_id=" .$DBEditrow['id'] ."&Revisor=".$DBEditrow['revisor_id']."&RevisorQue=".$revisorQue."&glass=".$glass. "&Langset=".$langset."&New=0>".fn_lang('REVSTUDY')."</a></td>";
+                                    echo "</tr>";
                                 };
                                 ?>
                             </tbody>
@@ -3593,9 +3770,7 @@ case 'Revisoredit':
                                 <?php echo ($result['11']==0)? "checked":"";//11 for replacing dok_review ?> hidden>
                             <!-- START DOK BTN -->
                                 <div class="enhanced_bar rev <?php echo ($result['11']==0)? "active":"";//'11' replacement for dok_review DB?>"
-                                style="
-                                display: inline-block;
-                                "></div>
+                                style="display: inline-block;"></div>
                             </label>
                             <!-- END DOK BTN-->
                             <!-- START DOK CONTENT-->                            
@@ -3684,7 +3859,7 @@ case 'Revisoredit':
                             <!-- END REFERENCE CONTENT-->
                             <!-- START REFERENCE COMMENT -->
                             <div class="body mb-3">
-                                <textarea placeholder="<?php echo fn_lang("REVCAUSE");?>" class="form-control" name="refcheck" id="refcheck" <?php echo($result['14'] == 0)? "hidden":"";?>><?php echo $result['reference_note'];?></textarea>
+                                <textarea placeholder="<?php echo fn_lang("REVCAUSE");?>" class="form-control" name="refcheck" id="refcheck" <?php echo($result['15'] == 0)? "hidden":"";?>><?php echo $result['reference_note'];?></textarea>
                             </div>
                             <!-- END REFERENCE COMMENT-->
                             <!-- START REFERENCE EXTRA NOTE -->
@@ -4047,6 +4222,16 @@ case 'AcceptQuestion':
     //check calling at first
     if ($_SERVER['REQUEST_METHOD'] === "POST") {
         //check Report btn is pushed
+        //prepare for Emails
+        $DPO=$con->prepare("SELECT * FROM question_review WHERE id = ?");
+        $DPO->execute(array($_GET['ReviewID']));
+        $review=$DPO->fetch();
+        $DPO=$con->prepare("SELECT * FROM teachers WHERE teacher_id = ?");
+        $DPO->execute(array($review['teacher_id']));
+        $emailCreator=$DPO->fetch();
+        $DPO=$con->prepare("SELECT * FROM teachers WHERE teacher_id = ?");
+        $DPO->execute(array($_SESSION['teacher_id']));
+        $emailRevisor=$DPO->fetch();
         if(isset($_POST['report'])){
             //Report for the review and rereview
             // Prepare Data Before DB
@@ -4229,15 +4414,21 @@ case 'AcceptQuestion':
             <!-- END Page Heading -->
             <!-- START PREPARE REPORT -->
             <div class="container" dir="<?php echo ($langset == "Eng") ? "ltr" : "rtl"; ?>">
-            <?php
-            fn_redirect("Sending report to Question creator", "success", 3, "?do=Dash&Langset=".$langset);
-            ?>
+                <?php
+                    //Report message and email to creator
+                    //sending email to creator
+                    $body = "<h1>Be Alerted</h1> <h2>".$emailCreator['ename']."</h2>";
+                    $msg=$emailRevisor['ename']." found some bugs in your Question, harry up and solve them and return question to be re-revised.<h2>Don't replay</h2><p>Well done</p>" . $web;            
+                    sendEmail($emailCreator['email'],$emailCreator['ename'],"Question Have some Bugs
+                    ",$body.$msg,$msg);
+                    //sending message to creator
+                    fn_redirect("Sending report to Question creator", "success", 3, "?do=Dash&Langset=".$langset);
+                ?>
             </div>
             <!-- END PREPARE REPORT -->
             <?php            
         }else if(isset($_POST['accept'])){
             //check Accept Q is pushed
-            
             //continue if Accept Q is pushed
             // clear all options in the review file
             //Report for the review and rereview
@@ -4447,8 +4638,9 @@ case 'AcceptQuestion':
             //check both revisors approval
             if ($DBRecord['rev_one_approval']==1 && $DBRecord['rev_two_approval']==1){
                 //both approved
-                $DBO=$con->prepare("UPDATE questions_create SET cart=?,pilot=? WHERE question_id=?");
-                $DBO->execute(array(0,1,$_GET['QuestionID']));
+                $datenow=$now->format('Y-m-d H:i:s');
+                $DBO=$con->prepare("UPDATE questions_create SET cart=?,pilot=?,submit_date=?,question_case=? WHERE question_id=?");
+                $DBO->execute(array(0,1,$datenow,2,$_GET['QuestionID']));
             }
             //Get the record from question_review DB
             $DBRevFile=$con->prepare("SELECT * FROM question_review WHERE question_id=? AND revisor_id=?");
@@ -4457,10 +4649,16 @@ case 'AcceptQuestion':
             //send Question to Pilot - mission done
             $DBRevUpdate=$con->prepare("UPDATE question_review SET review_status=?, finish_review_date=? WHERE id=?");
             $DBRevUpdate->execute(array(4,date("Y-m-d H:i:s"),$catch['id']));
+            //call email function
             
-
             echo '<div class="container">';
-            fn_redirect("Revision Accepted", "success", 3, "?do=Dash&Langset=".$langset);
+                //Report message and email to creator
+                //sending email to creator
+                $body = "<h1>Congratulation</h1> <h2>".$emailCreator['ename']."</h2>";
+                $msg=$emailRevisor['ename']." Approved your Question.<h2>Don't replay</h2><p>Well done</p>" . $web;            
+                sendEmail($emailCreator['email'],$emailCreator['ename'],"Question Accepted",$body.$msg,$msg);
+                //sending message email to creator
+                fn_redirect("Revision Accepted", "success", 3, "?do=Dash&Langset=".$langset);
             echo '</div>';
         }
     } else {
@@ -4798,7 +4996,7 @@ case 'Video':
                                                 <select name="depth" id="depth" class="depth form-select" required>
                                                     <option value="RECALL"><?php echo fn_lang('RECALL') ?></option>";
                                                     <option value="DIRECT"><?php echo fn_lang('DIRECT') ?></option>";
-                                                    <option value="STRATEGIC THINKNG"><?php echo fn_lang('STRATEGIC_THINKNG') ?></option>";
+                                                    <option value="STRATEGIC THINKNG"><?php echo fn_lang('STRATEGIC THINKNG') ?></option>";
                                                 </select>
                                             </label>
                                         </div>
